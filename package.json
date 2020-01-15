@@ -1,0 +1,33 @@
+{
+  "name": "@tictactrip/axios-redis",
+  "version": "0.0.0",
+  "description": "Axios Redis cache middleware",
+  "author": "Tictactrip <dev@tictactrip.eu>",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "dependencies": {},
+  "devDependencies": {
+    "@types/jest": "24.9.0",
+    "@types/node": "13.1.7",
+    "jest": "24.9.0",
+    "prettier": "1.19.1",
+    "ts-jest": "24.3.0",
+    "tslint": "5.20.1",
+    "tslint-config-prettier": "1.18.0",
+    "tslint-microsoft-contrib": "6.2.0",
+    "typescript": "3.7.4"
+  },
+  "scripts": {
+    "clean": "rm -rf coverage dist tmp",
+    "build": "yarn clean && tsc -p tsconfig.release.json",
+    "build:watch": "tsc -w -p tsconfig.release.json",
+    "prettier": "prettier --check '{src,__tests__}/**/*.ts'",
+    "prettier:fix": "prettier --write '{src,__tests__}/**/*.ts'",
+    "tslint": "tslint -t stylish --project 'tsconfig.json'",
+    "tslint:fix": "tslint --fix -t stylish --project 'tsconfig.json'",
+    "lint": "yarn tslint && yarn prettier",
+    "lint:fix": "yarn tslint:fix || true && yarn prettier:fix",
+    "test": "jest --coverage",
+    "test:watch": "jest --watch"
+  }
+}
