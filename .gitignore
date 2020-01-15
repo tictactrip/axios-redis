@@ -1,0 +1,11 @@
+logs
+*.log
+npm-debug.log*
+node_modules
+coverage
+.vscode
+!.vscode/tasks.js
+.idea
+.npm
+.DS_Store
+dist
