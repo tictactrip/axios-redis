@@ -5,10 +5,14 @@
   "author": "Tictactrip <dev@tictactrip.eu>",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
-  "dependencies": {},
+  "dependencies": {
+    "axios": "0.19.1",
+    "redis": "2.8.0"
+  },
   "devDependencies": {
     "@types/jest": "24.9.0",
     "@types/node": "13.1.7",
+    "@types/redis": "2.8.14",
     "jest": "24.9.0",
     "prettier": "1.19.1",
     "ts-jest": "24.3.0",
