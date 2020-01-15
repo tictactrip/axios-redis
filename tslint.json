@@ -1,6 +1,7 @@
 {
   "extends": ["tslint-microsoft-contrib/recommended", "tslint-config-prettier"],
   "rules": {
-    "no-relative-imports": false
+    "no-relative-imports": false,
+    "export-name": false
   }
 }
