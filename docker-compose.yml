@@ -1,0 +1,24 @@
+version: '3.3'
+
+services:
+  tests:
+    image: node:12
+    depends_on:
+      - redis
+    networks:
+      - test-network
+    volumes:
+      - .:/app
+    working_dir: /app
+    command: sh -c 'yarn && yarn test'
+
+  redis:
+    image: redis
+    ports:
+      - 6379:6379
+    networks:
+      - test-network
+
+networks:
+  test-network:
+    driver: bridge
