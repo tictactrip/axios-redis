@@ -1,1 +1,1 @@
-export { axiosRedisCache } from './axios';
+export { AxiosRedis } from './classes';
