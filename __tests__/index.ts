@@ -87,5 +87,37 @@ describe('index.ts', () => {
       expect(responseFromCache.status).toEqual(200);
       expect(responseFromCache.data).toStrictEqual({ success: true });
     });
+
+    it('should return axios error on failure request', async () => {
+      // tslint:disable-next-line:no-backbone-get-set-outside-model
+      const apiNock = nock('https://api.example.com')
+        .get('/example')
+        .query({ param1: 'true', param2: '123' })
+        .matchHeader('User-Agent', '@scope/example')
+        .matchHeader('Api-Key', '3b48b9fd18ecca20ed5b0accbfeb6b70')
+        .reply(400, {
+          success: false,
+        });
+
+      const redisSetAsyncSpy = jest.spyOn(axiosRedis, 'redisSetAsync');
+      const redisGetAsyncSpy = jest.spyOn(axiosRedis, 'redisGetAsync');
+
+      let error: Error | null = null;
+
+      try{
+        // tslint:disable-next-line:no-backbone-get-set-outside-model
+        await axiosInstance.get(
+          '/example?param1=true&param2=123',
+        );
+      } catch (err) {
+        error = err;
+      }
+
+      apiNock.done();
+      expect(error).toEqual(new Error('Request failed with status code 400'));
+      expect(redisSetAsyncSpy).toBeCalledTimes(0);
+      expect(redisGetAsyncSpy).toBeCalledTimes(1);
+      expect(redisGetAsyncSpy).nthCalledWith(1, 'get');
+    });
   });
 });
