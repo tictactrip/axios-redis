@@ -1,5 +1,5 @@
 import { RedisClient } from 'redis';
-import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
+import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
 import * as _ from 'lodash';
 import * as flatted from 'flatted';
 
@@ -31,6 +31,8 @@ enum EHttpMethod {
   UNLINK = 'unlink',
 }
 
+let axiosRedisInstance: AxiosRedis;
+
 export class AxiosRedis {
   private redis: RedisClient;
   private config: ICacheConfiguration;
@@ -43,6 +45,7 @@ export class AxiosRedis {
   constructor(redis: RedisClient, config: ICacheConfiguration) {
     this.redis = redis;
     this.config = config;
+    axiosRedisInstance = this;
   }
 
   /**
@@ -50,9 +53,16 @@ export class AxiosRedis {
    * @param {string} key
    * @returns {string}
    */
-  getCache(key: string): Promise<string|null> {
-    // @ts-ignore
-    return this.redis.getAsync(key);
+  getCache(key: string): Promise<string | null> {
+    return new Promise<string>((resolve, reject) => {
+      this.redis.get(key, (error, data) => {
+        if(error) {
+          return reject(error);
+        }
+
+        return resolve(data);
+      });
+    });
   }
 
   /**
@@ -62,77 +72,57 @@ export class AxiosRedis {
    * @returns Promise<string>
    */
   setCache(key: string, data: AxiosResponse): Promise<string> {
-    // @ts-ignore
-    return this.redis.setAsync(key, flatted.stringify(data), ERedisFlag.EXPIRATION, this.config.expirationInMS);
+    return new Promise<string>((resolve, reject) => {
+      this.redis.set(
+        key,
+        flatted.stringify(data),
+        ERedisFlag.EXPIRATION,
+        this.config.expirationInMS,
+        (error, data) => {
+          if(error) {
+            return reject(error);
+          }
+
+          return resolve(data);
+        });
+    });
+  }
+
+  static FETCH(config: AxiosRequestConfig) {
+    const axiosWithoutAdapter = axios.create(
+      Object.assign(config, { adapter: axios.defaults.adapter }),
+    );
+
+    return axiosWithoutAdapter.request(config);
   }
 
   /**
-   * @description Request Axios interceptor.
+   * @description Axios adapter.
    * @param {AxiosRequestConfig} config
-   * @returns {Promise<AxiosRequestConfig>}
    */
-  async requestInterceptor(config: AxiosRequestConfig, axiosInstance: AxiosInstance): Promise<AxiosRequestConfig> {
-    if([EHttpMethod.GET].includes(<EHttpMethod> config.method.toLowerCase())) {
-      const key = this.createKey(config);
+  async axiosAdapter(config: AxiosRequestConfig) {
+    try {
+      if (
+        [EHttpMethod.GET].includes(<EHttpMethod>config.method.toLowerCase())
+      ) {
+        const key = axiosRedisInstance.createKey(config);
 
-      const data = await this.getCache(key);
+        // tslint:disable-next-line:insecure-random
+        const data = await axiosRedisInstance.getCache(key);
 
-      if(data) {
-        return flatted.parse(data);
+        if (data) {
+          return flatted.parse(data);
+        }
+
+        // Send the request an store the result
+        const response = await AxiosRedis.FETCH(config);
+        await axiosRedisInstance.setCache(key, response);
+
+        return response;
       }
-
-      // @ts-ignore
-      config.isCached = false;
+    } catch (error) {
+      return AxiosRedis.FETCH(config);
     }
-
-    console.log('should stop the request');
-
-    return config;
-  }
-
-  /**
-   * @description Response Axios interceptor.
-   * @param {AxiosResponse} response
-   * @returns {Promise<AxiosRequestConfig>}
-   */
-  async responseInterceptor(response: AxiosResponse<any>): Promise<AxiosResponse<any>> {
-    // @ts-ignore
-    if(response.config.isCached === false) {
-      // @ts-ignore
-      response.config.isCached = true;
-
-      const key = this.createKey(response.config);
-      await this.setCache(key, response.data);
-    }
-
-    return response;
-  }
-
-
-  /**
-   * @description Axios interceptor.
-   * @param {AxiosInstance} axios
-   * @returns {AxiosInstance}
-   */
-  axiosInterceptor(axios: AxiosInstance): AxiosInstance {
-    const cache = this;
-
-    // Add a request interceptor
-    axios.interceptors.request.use(
-      config => cache.requestInterceptor(config, axios),
-      error => {
-
-        return Promise.reject(error);
-      },
-    );
-
-    // Add a response interceptor
-    axios.interceptors.response.use(
-      response => cache.responseInterceptor(response),
-      error => Promise.reject(error),
-    );
-
-    return axios;
   }
 
   /**
@@ -144,8 +134,10 @@ export class AxiosRedis {
     const arr = this.config.axiosConfigPaths.map((key: string) => {
       const value = _.get(axiosConfig, key);
 
-      if(typeof value !== 'string' || !value.length) {
-        throw new Error(`Axios config "${value}" key doesn't exist or is empty.`);
+      if (typeof value !== 'string' || !value.length) {
+        throw new Error(
+          `Axios config "${value}" key doesn't exist or is empty.`,
+        );
       }
 
       return value;
