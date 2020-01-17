@@ -30,7 +30,7 @@ enum EHttpMethod {
 let axiosRedisInstance: AxiosRedis;
 
 export class AxiosRedis {
-  private redis: RedisClient;
+  private readonly redis: RedisClient;
   private config: ICacheConfiguration;
   public redisSetAsync: (
     key: string,
