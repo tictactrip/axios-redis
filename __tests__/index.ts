@@ -60,9 +60,9 @@ describe('index.ts', () => {
         });
 
       // @ts-ignore
-      const setAsync = jest.spyOn(redis, 'setAsync');
+      const redisSetSpy = jest.spyOn(redis, 'set');
       // @ts-ignore
-      const getAsync = jest.spyOn(redis, 'getAsync');
+      const redisGetSpy = jest.spyOn(redis, 'get');
 
       // tslint:disable-next-line:no-backbone-get-set-outside-model
       const response = await axiosInstance.get(
@@ -75,17 +75,11 @@ describe('index.ts', () => {
       );
 
       callMock.done();
-      expect(setAsync).toBeCalledTimes(1);
-      expect(setAsync).nthCalledWith(
-        1,
-        'get',
-        axiosResponseSetCache,
-        'EX',
-        30000,
-      );
-      expect(getAsync).toBeCalledTimes(2);
-      expect(getAsync).nthCalledWith(1, 'get');
-      expect(getAsync).nthCalledWith(2, 'get');
+      expect(redisSetSpy).toBeCalledTimes(1);
+      expect(redisSetSpy).nthCalledWith(1, expect.any(Function));
+      expect(redisGetSpy).toBeCalledTimes(2);
+      expect(redisGetSpy).nthCalledWith(1, 'get', expect.any(Function));
+      expect(redisGetSpy).nthCalledWith(2, 'get', expect.any(Function));
       expect(response.status).toEqual(200);
       expect(response.data).toStrictEqual({success: true});
       expect(responseFromCache.status).toEqual(200);
