@@ -83,6 +83,8 @@ export class AxiosRedis {
    * @param {AxiosRequestConfig} config
    */
   async axiosAdapter(config: AxiosRequestConfig) {
+    let response: AxiosResponse | null = null;
+
     try {
       if (
         [EHttpMethod.GET].includes(<EHttpMethod>config.method.toLowerCase())
@@ -97,12 +99,16 @@ export class AxiosRedis {
         }
 
         // Send the request an store the result
-        const response = await axiosRedisInstance.fetch(config);
+        response = await axiosRedisInstance.fetch(config);
         await axiosRedisInstance.setCache(key, response);
 
         return response;
       }
     } catch (error) {
+      if (error.isAxiosError) {
+        throw error;
+      }
+
       return axiosRedisInstance.fetch(config);
     }
   }
