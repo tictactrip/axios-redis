@@ -73,14 +73,13 @@ export class AxiosRedis {
       ) {
         const key = axiosRedisInstance.createKey(config);
 
-        // tslint:disable-next-line:insecure-random
         const data = await axiosRedisInstance.getCache(key);
 
         if (data) {
           return flatted.parse(data);
         }
 
-        // Send the request an store the result
+        // Send the request an store the result in case of success
         response = await axiosRedisInstance.fetch(config);
         await axiosRedisInstance.setCache(key, response);
 
@@ -104,16 +103,10 @@ export class AxiosRedis {
     const arr = this.config.axiosConfigPaths.map((key: string) => {
       const value = _.get(axiosConfig, key);
 
-      if (typeof value !== 'string' || !value.length) {
-        throw new Error(
-          `Axios config "${value}" key doesn't exist or is empty.`,
-        );
-      }
-
-      return value;
+      return flatted.stringify(value);
     });
 
-    return arr.join(this.config.separator);
+    return [this.config.prefix, ...arr].join(this.config.separator);
   }
 
   /**
