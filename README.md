@@ -8,7 +8,7 @@
 
 ## Description
 
-This repository provides an axios redis cache middleware.
+This repository provides an axios redis cache adapter.
 
 ## Install
 
