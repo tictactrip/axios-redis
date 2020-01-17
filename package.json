@@ -7,7 +7,7 @@
   "types": "dist/index.d.ts",
   "dependencies": {
     "axios": "0.19.1",
-    "bluebird": "3.7.2",
+    "flatted": "2.0.1",
     "lodash": "4.17.15",
     "redis": "2.8.0"
   },
@@ -22,7 +22,7 @@
     "tslint": "5.20.1",
     "tslint-config-prettier": "1.18.0",
     "tslint-microsoft-contrib": "6.2.0",
-    "typescript": "3.7.4"
+    "typescript": "3.7.5"
   },
   "scripts": {
     "clean": "rm -rf coverage dist tmp",
