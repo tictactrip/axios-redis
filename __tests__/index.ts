@@ -104,11 +104,9 @@ describe('index.ts', () => {
 
       let error: Error | null = null;
 
-      try{
+      try {
         // tslint:disable-next-line:no-backbone-get-set-outside-model
-        await axiosInstance.get(
-          '/example?param1=true&param2=123',
-        );
+        await axiosInstance.get('/example?param1=true&param2=123');
       } catch (err) {
         error = err;
       }
