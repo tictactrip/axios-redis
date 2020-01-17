@@ -37,8 +37,12 @@ describe('index.ts', () => {
     });
   });
 
-  afterEach(() => {
+  beforeEach(() => {
     jest.resetAllMocks();
+  });
+
+  afterEach(() => {
+    nock.cleanAll();
   });
 
   describe('GET', () => {
