@@ -1,6 +1,5 @@
 // @flow
 import * as nock from 'nock';
-import * as bluebird from 'bluebird';
 import * as redisClient from 'redis';
 import axios, { AxiosInstance } from 'axios';
 import * as https from 'https';
@@ -12,8 +11,6 @@ describe('index.ts', () => {
   let axiosInstance: AxiosInstance;
 
   beforeAll(() => {
-    bluebird.promisifyAll(redisClient.RedisClient.prototype);
-    bluebird.promisifyAll(redisClient.Multi.prototype);
     redis = redisClient.createClient({ host: 'redis' });
     redis.flushall('ASYNC'); // TMP
 
