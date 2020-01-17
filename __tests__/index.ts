@@ -146,5 +146,52 @@ describe('index.ts', () => {
       expect(redisGetAsyncSpy).toBeCalledTimes(1);
       expect(redisGetAsyncSpy).nthCalledWith(1, 'get');
     });
+
+    it('should send the request in case createKey error', async () => {
+      const axiosRedisTmp = new AxiosRedis(redis, {
+        expirationInMS: 30 * 1000,
+        prefix: '@scope/package',
+        separator: '___',
+        axiosConfigPaths: ['unknownAxiosKey'],
+      });
+
+      const axiosInstanceTmp = axios.create({
+        baseURL: 'https://api.example.com',
+        headers: {
+          'User-Agent': '@scope/example',
+          'Api-Key': '3b48b9fd18ecca20ed5b0accbfeb6b70',
+        },
+        httpsAgent: new https.Agent({
+          rejectUnauthorized: false,
+        }),
+        adapter: axiosRedis.axiosAdapter,
+      });
+
+      // tslint:disable-next-line:no-backbone-get-set-outside-model
+      const apiNock = nock('https://api.example.com')
+        .get('/example')
+        .query({ param1: 'true', param2: '123' })
+        .matchHeader('User-Agent', '@scope/example')
+        .matchHeader('Api-Key', '3b48b9fd18ecca20ed5b0accbfeb6b70')
+        .reply(200, {
+          success: true,
+        });
+
+      const redisSetAsyncSpy = jest.spyOn(axiosRedis, 'redisSetAsync');
+      const redisGetAsyncSpy = jest
+        .spyOn(axiosRedis, 'redisGetAsync')
+        .mockRejectedValue(new Error('Unexpected error'));
+
+      // tslint:disable-next-line:no-backbone-get-set-outside-model
+      const response = await axiosInstance.get(
+        '/example?param1=true&param2=123',
+      );
+
+      apiNock.done();
+      expect(response.status).toEqual(200);
+      expect(response.data).toStrictEqual({ success: true });
+      expect(redisSetAsyncSpy).toBeCalledTimes(0);
+      expect(redisGetAsyncSpy).toBeCalledTimes(0);
+    });
   });
 });
