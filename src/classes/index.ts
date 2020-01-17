@@ -2,6 +2,7 @@ import { RedisClient } from 'redis';
 import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
 import * as _ from 'lodash';
 import * as flatted from 'flatted';
+import { promisify } from 'util';
 
 enum ERedisFlag {
   EXPIRATION = 'EX',
@@ -12,11 +13,6 @@ interface ICacheConfiguration {
   separator: string;
   prefix: string;
   axiosConfigPaths: string[];
-}
-
-interface ISetCache {
-  key: string;
-  data: string;
 }
 
 enum EHttpMethod {
@@ -36,6 +32,13 @@ let axiosRedisInstance: AxiosRedis;
 export class AxiosRedis {
   private redis: RedisClient;
   private config: ICacheConfiguration;
+  public redisSetAsync: (
+    key: string,
+    value: string,
+    flag: ERedisFlag,
+    expirationInMS: number,
+  ) => Promise<string>;
+  public redisGetAsync: (key: string) => Promise<string | null>;
 
   /**
    * @constructor
@@ -45,6 +48,9 @@ export class AxiosRedis {
   constructor(redis: RedisClient, config: ICacheConfiguration) {
     this.redis = redis;
     this.config = config;
+    this.redisSetAsync = promisify(this.redis.set).bind(this.redis);
+    this.redisGetAsync = promisify(this.redis.get).bind(this.redis);
+
     axiosRedisInstance = this;
   }
 
@@ -54,15 +60,7 @@ export class AxiosRedis {
    * @returns {string}
    */
   getCache(key: string): Promise<string | null> {
-    return new Promise<string>((resolve, reject) => {
-      this.redis.get(key, (error, data) => {
-        if(error) {
-          return reject(error);
-        }
-
-        return resolve(data);
-      });
-    });
+    return this.redisGetAsync(key);
   }
 
   /**
@@ -72,28 +70,12 @@ export class AxiosRedis {
    * @returns Promise<string>
    */
   setCache(key: string, data: AxiosResponse): Promise<string> {
-    return new Promise<string>((resolve, reject) => {
-      this.redis.set(
-        key,
-        flatted.stringify(data),
-        ERedisFlag.EXPIRATION,
-        this.config.expirationInMS,
-        (error, data) => {
-          if(error) {
-            return reject(error);
-          }
-
-          return resolve(data);
-        });
-    });
-  }
-
-  static FETCH(config: AxiosRequestConfig) {
-    const axiosWithoutAdapter = axios.create(
-      Object.assign(config, { adapter: axios.defaults.adapter }),
+    return this.redisSetAsync(
+      key,
+      flatted.stringify(data),
+      ERedisFlag.EXPIRATION,
+      this.config.expirationInMS,
     );
-
-    return axiosWithoutAdapter.request(config);
   }
 
   /**
@@ -115,18 +97,18 @@ export class AxiosRedis {
         }
 
         // Send the request an store the result
-        const response = await AxiosRedis.FETCH(config);
+        const response = await axiosRedisInstance.fetch(config);
         await axiosRedisInstance.setCache(key, response);
 
         return response;
       }
     } catch (error) {
-      return AxiosRedis.FETCH(config);
+      return axiosRedisInstance.fetch(config);
     }
   }
 
   /**
-   * @description Create key from config paths.
+   * @description Creates key from config paths.
    * @param {AxiosRequestConfig} axiosConfig
    * @returns {string}
    */
@@ -144,5 +126,17 @@ export class AxiosRedis {
     });
 
     return arr.join('___');
+  }
+
+  /**
+   * @description Fetch with default adapter.
+   * @param {AxiosRequestConfig} config
+   */
+  private fetch(config: AxiosRequestConfig): Promise<any> {
+    const axiosDefaultAdapter = axios.create(
+      Object.assign(config, { adapter: axios.defaults.adapter }),
+    );
+
+    return axiosDefaultAdapter.request(config);
   }
 }
