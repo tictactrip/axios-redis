@@ -3,32 +3,13 @@ import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
 import * as _ from 'lodash';
 import * as flatted from 'flatted';
 import { promisify } from 'util';
-
-enum ERedisFlag {
-  EXPIRATION = 'EX',
-}
-
-interface ICacheConfiguration {
-  expirationInMS: number;
-  separator: string;
-  prefix: string;
-  axiosConfigPaths: string[];
-}
-
-enum EHttpMethod {
-  GET = 'get',
-  DELETE = 'delete',
-  HEAD = 'head',
-  OPTIONS = 'options',
-  POST = 'post',
-  PUT = 'put',
-  PATCH = 'patch',
-  LINK = 'link',
-  UNLINK = 'unlink',
-}
+import { EHttpMethod, ERedisFlag, ICacheConfiguration } from './types';
 
 let axiosRedisInstance: AxiosRedis;
 
+/**
+ * @description AxiosRedis class.
+ */
 export class AxiosRedis {
   private readonly redis: RedisClient;
   private config: ICacheConfiguration;
@@ -57,7 +38,7 @@ export class AxiosRedis {
   /**
    * @description Returns key value.
    * @param {string} key
-   * @returns {string}
+   * @returns {Promise<string | null>}
    */
   getCache(key: string): Promise<string | null> {
     return this.redisGetAsync(key);
@@ -81,8 +62,9 @@ export class AxiosRedis {
   /**
    * @description Axios adapter.
    * @param {AxiosRequestConfig} config
+   * @returns {Promise<AxiosResponse<any>>}
    */
-  async axiosAdapter(config: AxiosRequestConfig) {
+  async axiosAdapter(config: AxiosRequestConfig): Promise<AxiosResponse<any>> {
     let response: AxiosResponse | null = null;
 
     try {
@@ -131,14 +113,15 @@ export class AxiosRedis {
       return value;
     });
 
-    return arr.join('___');
+    return arr.join(this.config.separator);
   }
 
   /**
    * @description Fetch with default adapter.
    * @param {AxiosRequestConfig} config
+   * @returns {Promise<AxiosResponse<any>>}
    */
-  private fetch(config: AxiosRequestConfig): Promise<any> {
+  private fetch(config: AxiosRequestConfig): Promise<AxiosResponse<any>> {
     const axiosDefaultAdapter = axios.create(
       Object.assign(config, { adapter: axios.defaults.adapter }),
     );
