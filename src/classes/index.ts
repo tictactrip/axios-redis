@@ -87,7 +87,7 @@ export class AxiosRedis {
         return response;
       }
     } catch (error) {
-      if (error.isAxiosErrorm) {
+      if (error.isAxiosError) {
         throw error;
       }
 
