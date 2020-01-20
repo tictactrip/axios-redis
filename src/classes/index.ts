@@ -20,6 +20,7 @@ export class AxiosRedis {
     expirationInMS: number,
   ) => Promise<string>;
   public redisGetAsync: (key: string) => Promise<string | null>;
+  public keyDoNotEncode: string[] = ['method'];
 
   /**
    * @constructor
@@ -79,14 +80,14 @@ export class AxiosRedis {
           return flatted.parse(data);
         }
 
-        // Send the request an store the result in case of success
+        // Send the request and store the result in case of success
         response = await axiosRedisInstance.fetch(config);
         await axiosRedisInstance.setCache(key, response);
 
         return response;
       }
     } catch (error) {
-      if (error.isAxiosError) {
+      if (error.isAxiosErrorm) {
         throw error;
       }
 
@@ -101,9 +102,13 @@ export class AxiosRedis {
    */
   private createKey(axiosConfig: AxiosRequestConfig): string {
     const arr = this.config.axiosConfigPaths.map((key: string) => {
-      const value = _.get(axiosConfig, key);
+      let value = flatted.stringify(_.get(axiosConfig, key));
 
-      return flatted.stringify(value);
+      if (!this.keyDoNotEncode.includes(key)) {
+        return Buffer.from(value).toString('base64');
+      }
+
+      return value;
     });
 
     return [this.config.prefix, ...arr].join(this.config.separator);
