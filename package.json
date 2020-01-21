@@ -34,7 +34,6 @@
     "tslint:fix": "tslint --fix -t stylish --project 'tsconfig.json'",
     "lint": "yarn tslint && yarn prettier",
     "lint:fix": "yarn tslint:fix || true && yarn prettier:fix",
-    "test": "jest --coverage",
-    "test:watch": "jest --watch"
+    "test": "docker-compose up --abort-on-container-exit"
   }
 }
