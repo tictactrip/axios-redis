@@ -35,7 +35,7 @@ export class AxiosRedis {
   /**
    * @description Returns key value.
    * @param {string} key
-   * @returns {Promise<string | null>}
+   * @returns {Promise<string|null>}
    */
   getCache(key: string): Promise<string | null> {
     return this.redisGetAsync(key);
@@ -54,9 +54,9 @@ export class AxiosRedis {
   /**
    * @description Axios adapter.
    * @param {AxiosRequestConfig} config
-   * @returns {Promise<AxiosResponse<any>>}
+   * @returns {Promise<AxiosResponse>}
    */
-  async axiosAdapter(config: AxiosRequestConfig): Promise<AxiosResponse<any>> {
+  async axiosAdapter(config: AxiosRequestConfig): Promise<AxiosResponse> {
     let response: AxiosResponse | null = null;
 
     try {
@@ -108,9 +108,9 @@ export class AxiosRedis {
   /**
    * @description Fetch with default adapter.
    * @param {AxiosRequestConfig} config
-   * @returns {Promise<AxiosResponse<any>>}
+   * @returns {Promise<AxiosResponse>}
    */
-  private fetch(config: AxiosRequestConfig): Promise<AxiosResponse<any>> {
+  private fetch(config: AxiosRequestConfig): Promise<AxiosResponse> {
     const axiosDefaultAdapter = axios.create(Object.assign(config, { adapter: axios.defaults.adapter }));
 
     return axiosDefaultAdapter.request(config);
