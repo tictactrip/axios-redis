@@ -53,7 +53,7 @@ As default, all *GET* and *POST* responses are cached.
 If you want to customize it, you can also override them:
 
 ```ts 
-axiosRedis.methodsToCache: = [EHttpMethod.GET];
+axiosRedis.methodsToCache = [EHttpMethod.GET];
 ```
 
 ### What's the de key structure?
