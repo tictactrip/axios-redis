@@ -13,14 +13,10 @@ let axiosRedisInstance: AxiosRedis;
 export class AxiosRedis {
   private readonly redis: RedisClient;
   private config: ICacheConfiguration;
-  public redisSetAsync: (
-    key: string,
-    value: string,
-    flag: ERedisFlag,
-    expirationInMS: number,
-  ) => Promise<string>;
+  public redisSetAsync: (key: string, value: string, flag: ERedisFlag, expirationInMS: number) => Promise<string>;
   public redisGetAsync: (key: string) => Promise<string | null>;
   public keyDoNotEncode: string[] = ['method'];
+  public methodsToCache: EHttpMethod[] = [EHttpMethod.GET, EHttpMethod.POST];
 
   /**
    * @constructor
@@ -52,12 +48,7 @@ export class AxiosRedis {
    * @returns Promise<string>
    */
   setCache(key: string, data: AxiosResponse): Promise<string> {
-    return this.redisSetAsync(
-      key,
-      flatted.stringify(data),
-      ERedisFlag.EXPIRATION,
-      this.config.expirationInMS,
-    );
+    return this.redisSetAsync(key, flatted.stringify(data), ERedisFlag.EXPIRATION, this.config.expirationInMS);
   }
 
   /**
@@ -69,9 +60,7 @@ export class AxiosRedis {
     let response: AxiosResponse | null = null;
 
     try {
-      if (
-        [EHttpMethod.GET].includes(<EHttpMethod>config.method.toLowerCase())
-      ) {
+      if (axiosRedisInstance.methodsToCache.includes(<EHttpMethod>config.method.toLowerCase())) {
         const key = axiosRedisInstance.createKey(config);
 
         const data = await axiosRedisInstance.getCache(key);
@@ -86,6 +75,8 @@ export class AxiosRedis {
 
         return response;
       }
+
+      return axiosRedisInstance.fetch(config);
     } catch (error) {
       if (error.isAxiosError) {
         throw error;
@@ -120,9 +111,7 @@ export class AxiosRedis {
    * @returns {Promise<AxiosResponse<any>>}
    */
   private fetch(config: AxiosRequestConfig): Promise<AxiosResponse<any>> {
-    const axiosDefaultAdapter = axios.create(
-      Object.assign(config, { adapter: axios.defaults.adapter }),
-    );
+    const axiosDefaultAdapter = axios.create(Object.assign(config, { adapter: axios.defaults.adapter }));
 
     return axiosDefaultAdapter.request(config);
   }
