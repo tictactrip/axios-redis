@@ -11,5 +11,6 @@ before_install:
   - sudo mv docker-compose /usr/local/bin
   - yarn add codecov -g
 script:
+  - yarn
   - docker-compose up --abort-on-container-exit
 after_success: codecov
