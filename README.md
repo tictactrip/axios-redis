@@ -47,16 +47,16 @@ await axiosInstance.get('/user?ID=12345');
 await axiosInstance.get('/user?ID=12345');
 ```
 
-### Which are caches HTTP methods?
+### Which are cached HTTP methods?
 
 As default, all *GET* and *POST* responses are cached.
-If you want to customize it, you can also override them:
+If you want to customize them, you can also do:
 
 ```ts 
 axiosRedis.methodsToCache = [EHttpMethod.GET];
 ```
 
-### What's the de key structure?
+### What's the key structure?
 
 As default, keys have bellow pattern:
 
