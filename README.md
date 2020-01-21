@@ -18,7 +18,59 @@ yarn add @tictactrip/axios-redis
 
 ## How to use it?
 
-...
+```ts
+import * as redis from 'redis';
+import axios from 'axios';
+import { AxiosRedis } from '@tictactrip/axios-redis';
+
+// Redis connexion
+const redis = redisClient.createClient({ host: 'localhost' });
+
+// Create your AxiosRedis instance
+const axiosRedis = new AxiosRedis(redis, {
+  expirationInMS: 30000,
+  prefix: '@tictactrip/package@1.0.0',
+  separator: '___',
+  axiosConfigPaths: ['method', 'url', 'params', 'data'],
+});
+
+// Create your Axios instance
+const axiosInstance = axios.create({
+  baseURL: 'http://api.example.com',
+  adapter: axiosRedis.axiosAdapter,
+});
+
+// Response will be cache on first call
+await axiosInstance.get('/user?ID=12345');
+
+// On second call, if response is still cached, adapter returns cached response without sending the request
+await axiosInstance.get('/user?ID=12345');
+```
+
+### Which are caches HTTP methods?
+
+As default, all *GET* and *POST* responses are cached.
+If you want to customize it, you can also override them:
+
+```ts 
+axiosRedis.methodsToCache: = [EHttpMethod.GET];
+```
+
+### What's the de key structure?
+
+As default, keys have bellow pattern:
+
+```ts
+{prefix}___{http_method}___{axios_config_url}___base64{axios_config_params}___base64{axios_config_data}
+```
+
+Example:
+
+```ts
+@scope/package@1.0.1___["post"]___WyIvZXhhbXBsZTE/cGFyYW0xPXRydWUmcGFyYW0yPTEyMyJd___W10=___WyJ7XCJoZWxsb1wiOlwid29ybGRcIn0iXQ==
+```
+
+If you want to customize the keys, you just need to customize your `AxiosRedis` instance.
 
 ## Scripts
 
@@ -30,7 +82,6 @@ Run using yarn run `<script>` command.
     lint        - Lint source files.
     lint:fix    - Fix lint source files.
     test        - Runs all tests with coverage.
-    test:watch  - Interactive watch mode, runs tests on change.
 
 ## License
 
