@@ -97,7 +97,6 @@ describe('index.ts', () => {
         const axiosResponseSetCache =
           '[{"status":200,"statusText":null,"headers":"1","config":"2","request":"3","data":"4"},{"content-type":"5"},{"url":"6","method":"7","data":"8","headers":"9","baseURL":"10","transformRequest":"11","transformResponse":"12","timeout":0,"xsrfCookieName":"13","xsrfHeaderName":"14","maxContentLength":-1,"httpsAgent":"15"},{"_events":"16","_eventsCount":5,"outputData":"17","outputSize":0,"writable":true,"_last":false,"chunkedEncoding":false,"shouldKeepAlive":true,"useChunkedEncodingByDefault":true,"sendDate":false,"_removedConnection":false,"_removedContLen":false,"_removedTE":false,"_contentLength":null,"_hasBody":true,"_trailer":"18","finished":false,"_headerSent":false,"socket":"19","connection":"19","_header":null,"path":"6","method":"20","req":"3","options":"21","interceptors":"22","response":"23","playbackStarted":false,"requestBodyBuffers":"24","_redirectable":"25","headers":"26"},{"success":true},"application/json","/example1?param1=true&param2=123","post","{\\"hello\\":\\"world\\"}",{"Accept":"27","Content-Type":"28","User-Agent":"29","Api-Key":"30","Content-Length":17},"https://api.example.com",[null],[null],"XSRF-TOKEN","X-XSRF-TOKEN",{"_events":"31","_eventsCount":1,"defaultPort":443,"protocol":"32","options":"33","requests":"34","sockets":"35","freeSockets":"36","keepAliveMsecs":1000,"keepAlive":false,"maxSockets":null,"maxFreeSockets":256,"maxCachedSessions":100,"_sessionCache":"37"},{},[],"",{"_events":"38","_eventsCount":2,"authorized":true,"bufferSize":0,"writable":true,"readable":true,"pending":false,"destroyed":false,"connecting":false,"totalDelayMs":0,"timeoutMs":null,"remoteFamily":"39","remoteAddress":"40","localAddress":"40","remotePort":443,"localPort":443},"POST",{"protocol":"32","maxRedirects":21,"maxBodyLength":10485760,"path":"6","method":"20","headers":"41","agent":"15","agents":"42","hostname":"43","port":443,"nativeProtocols":"44","pathname":"45","search":"46","proto":"47","host":"48"},[],{"_readableState":"49","readable":false,"_events":"50","_eventsCount":3,"socket":"19","connection":"19","httpVersionMajor":null,"httpVersionMinor":null,"httpVersion":null,"complete":true,"headers":"1","rawHeaders":"51","trailers":"52","rawTrailers":"53","aborted":false,"upgrade":null,"url":"18","method":null,"statusCode":200,"statusMessage":null,"client":"19","_consuming":true,"_dumped":false,"req":"3","responseUrl":"54","redirects":"55"},["56"],{"_writableState":"57","writable":true,"_events":"58","_eventsCount":2,"_options":"59","_redirectCount":0,"_redirects":"55","_requestBodyLength":17,"_requestBodyBuffers":"60","_currentRequest":"3","_currentUrl":"54"},{"accept":"27","content-type":"28","user-agent":"29","api-key":"30","content-length":17,"host":"43"},"application/json, text/plain, */*","application/json;charset=utf-8","@scope/package","3b48b9fd18ecca20ed5b0accbfeb6b70",{},"https:",{"rejectUnauthorized":false,"path":null},{},{},{},{"map":"61","list":"62"},{},"IPv4","127.0.0.1",{"accept":"27","content-type":"28","user-agent":"29","api-key":"30","content-length":17},{"https":"15"},"api.example.com",{"http:":"63","https:":"64"},"/example1","?param1=true&param2=123","https","api.example.com:443",{"objectMode":false,"highWaterMark":16384,"buffer":"65","length":0,"pipes":null,"pipesCount":0,"flowing":true,"ended":true,"endEmitted":true,"reading":false,"sync":false,"needReadable":false,"emittedReadable":false,"readableListening":false,"resumeScheduled":false,"paused":false,"emitClose":true,"autoDestroy":false,"destroyed":false,"defaultEncoding":"66","awaitDrain":0,"readingMore":false,"decoder":null,"encoding":null},{},["67","5"],{},[],"https://api.example.com/example1?param1=true&param2=123",[],{"type":"68","data":"69"},{"objectMode":false,"highWaterMark":16384,"finalCalled":false,"needDrain":false,"ending":false,"ended":false,"finished":false,"destroyed":false,"decodeStrings":true,"defaultEncoding":"66","length":0,"writing":false,"corked":0,"sync":true,"bufferProcessing":false,"writecb":null,"writelen":0,"afterWriteTickInfo":null,"bufferedRequest":null,"lastBufferedRequest":null,"pendingcb":0,"prefinished":false,"errorEmitted":false,"emitClose":true,"autoDestroy":false,"bufferedRequestCount":0,"corkedRequestsFree":"70"},{},{"protocol":"32","maxRedirects":21,"maxBodyLength":10485760,"path":"6","method":"20","headers":"9","agent":"15","agents":"42","hostname":"43","port":null,"nativeProtocols":"44","pathname":"45","search":"46"},[],{},[],{"METHODS":"71","STATUS_CODES":"72","maxHeaderSize":8192,"globalAgent":"73"},{"globalAgent":"74"},{"head":null,"tail":null,"length":0},"utf8","Content-Type","Buffer",[123,34,104,101,108,108,111,34,58,34,119,111,114,108,100,34,125],{"next":null,"entry":null},["75","76","77","78","79","80","81","82","83","84","85","86","87","88","89","90","91","92","93","20","94","95","96","97","98","99","100","101","102","103","104","105","106","107"],{"100":"108","101":"109","102":"110","103":"111","200":"112","201":"113","202":"114","203":"115","204":"116","205":"117","206":"118","207":"119","208":"120","226":"121","300":"122","301":"123","302":"124","303":"125","304":"126","305":"127","307":"128","308":"129","400":"130","401":"131","402":"132","403":"133","404":"134","405":"135","406":"136","407":"137","408":"138","409":"139","410":"140","411":"141","412":"142","413":"143","414":"144","415":"145","416":"146","417":"147","418":"148","421":"149","422":"150","423":"151","424":"152","425":"153","426":"154","428":"155","429":"156","431":"157","451":"158","500":"159","501":"160","502":"161","503":"162","504":"163","505":"164","506":"165","507":"166","508":"167","509":"168","510":"169","511":"170"},{"_events":"171","_eventsCount":1,"defaultPort":80,"protocol":"172","options":"173","requests":"174","sockets":"175","freeSockets":"176","keepAliveMsecs":1000,"keepAlive":false,"maxSockets":null,"maxFreeSockets":256},{"_events":"177","_eventsCount":1,"defaultPort":443,"protocol":"32","options":"178","requests":"179","sockets":"180","freeSockets":"181","keepAliveMsecs":1000,"keepAlive":false,"maxSockets":null,"maxFreeSockets":256,"maxCachedSessions":100,"_sessionCache":"182"},"ACL","BIND","CHECKOUT","CONNECT","COPY","DELETE","GET","HEAD","LINK","LOCK","M-SEARCH","MERGE","MKACTIVITY","MKCALENDAR","MKCOL","MOVE","NOTIFY","OPTIONS","PATCH","PROPFIND","PROPPATCH","PURGE","PUT","REBIND","REPORT","SEARCH","SOURCE","SUBSCRIBE","TRACE","UNBIND","UNLINK","UNLOCK","UNSUBSCRIBE","Continue","Switching Protocols","Processing","Early Hints","OK","Created","Accepted","Non-Authoritative Information","No Content","Reset Content","Partial Content","Multi-Status","Already Reported","IM Used","Multiple Choices","Moved Permanently","Found","See Other","Not Modified","Use Proxy","Temporary Redirect","Permanent Redirect","Bad Request","Unauthorized","Payment Required","Forbidden","Not Found","Method Not Allowed","Not Acceptable","Proxy Authentication Required","Request Timeout","Conflict","Gone","Length Required","Precondition Failed","Payload Too Large","URI Too Long","Unsupported Media Type","Range Not Satisfiable","Expectation Failed","I\'m a Teapot","Misdirected Request","Unprocessable Entity","Locked","Failed Dependency","Unordered Collection","Upgrade Required","Precondition Required","Too Many Requests","Request Header Fields Too Large","Unavailable For Legal Reasons","Internal Server Error","Not Implemented","Bad Gateway","Service Unavailable","Gateway Timeout","HTTP Version Not Supported","Variant Also Negotiates","Insufficient Storage","Loop Detected","Bandwidth Limit Exceeded","Not Extended","Network Authentication Required",{},"http:",{"path":null},{},{},{},{},{"path":null},{},{},{},{"map":"183","list":"184"},{},[]]';
 
-        // tslint:disable-next-line:no-backbone-get-set-outside-model
         const apiNock = nock('https://api.example.com')
           .post('/example1', { hello: 'world' })
           .query({ param1: true, param2: 123 })
@@ -110,13 +109,11 @@ describe('index.ts', () => {
         const redisSetAsyncSpy = jest.spyOn(axiosRedis, 'redisSetAsync');
         const redisGetAsyncSpy = jest.spyOn(axiosRedis, 'redisGetAsync');
 
-        // tslint:disable-next-line:no-backbone-get-set-outside-model
         const response = await axiosInstance.post(
           '/example1?param1=true&param2=123',
           { hello: 'world' },
         );
 
-        // tslint:disable-next-line:no-backbone-get-set-outside-model
         const responseFromCache = await axiosInstance.post(
           '/example1?param1=true&param2=123',
           { hello: 'world' },
@@ -145,6 +142,58 @@ describe('index.ts', () => {
         expect(response.data).toStrictEqual({ success: true });
         expect(responseFromCache.status).toEqual(200);
         expect(responseFromCache.data).toStrictEqual({ success: true });
+      });
+    });
+  });
+
+  describe('Not cache', () => {
+    describe('PUT', () => {
+      it('should not cache', async () => {
+        const apiNock = nock('https://api.example.com')
+          .put('/example/1', { hello: 'world' })
+          .query({ sort: 'desc' })
+          .matchHeader('User-Agent', '@scope/package')
+          .matchHeader('Api-Key', '3b48b9fd18ecca20ed5b0accbfeb6b70')
+          .reply(200, {
+            success: true,
+          });
+
+        const redisSetAsyncSpy = jest.spyOn(axiosRedis, 'redisSetAsync');
+        const redisGetAsyncSpy = jest.spyOn(axiosRedis, 'redisGetAsync');
+
+        const response = await axiosInstance.put('/example/1?sort=desc', {
+          hello: 'world',
+        });
+
+        apiNock.done();
+        expect(redisSetAsyncSpy).toBeCalledTimes(0);
+        expect(redisGetAsyncSpy).toBeCalledTimes(0);
+        expect(response.status).toEqual(200);
+        expect(response.data).toStrictEqual({ success: true });
+      });
+    });
+
+    describe('DELETE', () => {
+      it('should not cache', async () => {
+        const apiNock = nock('https://api.example.com')
+          .delete('/example/1', { hello: 'world' })
+          .query({ sort: 'desc' })
+          .matchHeader('User-Agent', '@scope/package')
+          .matchHeader('Api-Key', '3b48b9fd18ecca20ed5b0accbfeb6b70')
+          .reply(200);
+
+        const redisSetAsyncSpy = jest.spyOn(axiosRedis, 'redisSetAsync');
+        const redisGetAsyncSpy = jest.spyOn(axiosRedis, 'redisGetAsync');
+
+        const response = await axiosInstance.delete('/example/1', {
+          data: { hello: 'world' },
+          params: { sort: 'desc' },
+        });
+
+        apiNock.done();
+        expect(redisSetAsyncSpy).toBeCalledTimes(0);
+        expect(redisGetAsyncSpy).toBeCalledTimes(0);
+        expect(response.status).toEqual(200);
       });
     });
   });
