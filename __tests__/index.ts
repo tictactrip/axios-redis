@@ -11,7 +11,7 @@ describe('index.ts', () => {
 
   beforeAll(() => {
     redis = redisClient.createClient({ host: 'redis' });
-    redis.flushall('ASYNC'); // TMP
+    redis.flushall('ASYNC');
     axiosRedis = new AxiosRedis(redis, {
       expirationInMS: 30 * 1000,
       prefix: '@scope/package@1.0.1',
