@@ -13,7 +13,7 @@
   },
   "devDependencies": {
     "@types/jest": "24.9.0",
-    "@types/node": "13.1.7",
+    "@types/node": "12.12.6",
     "@types/redis": "2.8.14",
     "jest": "24.9.0",
     "nock": "11.7.2",
