@@ -8,7 +8,7 @@
 
 ## Description
 
-This repository provides an axios redis cache adapter.
+This repository provides an Axios Redis cache adapter.
 
 ## Install
 
@@ -47,7 +47,7 @@ await axiosInstance.get('/user?ID=12345');
 await axiosInstance.get('/user?ID=12345');
 ```
 
-### Which are cached HTTP methods?
+### Which http methods are cached? 
 
 As default, all *GET* and *POST* responses are cached.
 If you want to customize them, you can also do:
