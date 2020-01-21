@@ -58,14 +58,10 @@ describe('index.ts', () => {
         const redisGetAsyncSpy = jest.spyOn(axiosRedis, 'redisGetAsync');
 
         // tslint:disable-next-line:no-backbone-get-set-outside-model
-        const response = await axiosInstance.get(
-          '/example1?param1=true&param2=123',
-        );
+        const response = await axiosInstance.get('/example1?param1=true&param2=123');
 
         // tslint:disable-next-line:no-backbone-get-set-outside-model
-        const responseFromCache = await axiosInstance.get(
-          '/example1?param1=true&param2=123',
-        );
+        const responseFromCache = await axiosInstance.get('/example1?param1=true&param2=123');
 
         apiNock.done();
         expect(redisSetAsyncSpy).toBeCalledTimes(1);
@@ -109,15 +105,9 @@ describe('index.ts', () => {
         const redisSetAsyncSpy = jest.spyOn(axiosRedis, 'redisSetAsync');
         const redisGetAsyncSpy = jest.spyOn(axiosRedis, 'redisGetAsync');
 
-        const response = await axiosInstance.post(
-          '/example1?param1=true&param2=123',
-          { hello: 'world' },
-        );
+        const response = await axiosInstance.post('/example1?param1=true&param2=123', { hello: 'world' });
 
-        const responseFromCache = await axiosInstance.post(
-          '/example1?param1=true&param2=123',
-          { hello: 'world' },
-        );
+        const responseFromCache = await axiosInstance.post('/example1?param1=true&param2=123', { hello: 'world' });
 
         apiNock.done();
 
@@ -249,9 +239,7 @@ describe('index.ts', () => {
         .mockRejectedValue(new Error('Unexpected error.'));
 
       // tslint:disable-next-line:no-backbone-get-set-outside-model
-      const response = await axiosInstance.get(
-        '/example4?param1=true&param2=123',
-      );
+      const response = await axiosInstance.get('/example4?param1=true&param2=123');
 
       apiNock.done();
       expect(redisSetAsyncSpy).toBeCalledTimes(0);
