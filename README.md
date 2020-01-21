@@ -40,7 +40,7 @@ const axiosInstance = axios.create({
   adapter: axiosRedis.axiosAdapter,
 });
 
-// Response will be cache on first call
+// Response will be cached on first call
 await axiosInstance.get('/user?ID=12345');
 
 // On second call, if response is still cached, adapter returns cached response without sending the request
