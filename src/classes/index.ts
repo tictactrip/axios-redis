@@ -3,7 +3,8 @@ import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
 import * as _ from 'lodash';
 import * as flatted from 'flatted';
 import { promisify } from 'util';
-import { EHttpMethod, ERedisFlag, ICacheConfiguration } from './types';
+import { EHttpMethod, ERedisFlag } from './types';
+import { ICacheConfiguration, defaultConfiguration } from './config';
 
 let axiosRedisInstance: AxiosRedis;
 
@@ -25,7 +26,7 @@ export class AxiosRedis {
    */
   constructor(redis: RedisClient, config: ICacheConfiguration) {
     this.redis = redis;
-    this.config = config;
+    this.config = { ...defaultConfiguration, ...config };
     this.redisSetAsync = promisify(this.redis.set).bind(this.redis);
     this.redisGetAsync = promisify(this.redis.get).bind(this.redis);
 
