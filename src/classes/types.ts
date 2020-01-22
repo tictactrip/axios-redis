@@ -2,13 +2,6 @@ enum ERedisFlag {
   EXPIRATION = 'EX',
 }
 
-interface ICacheConfiguration {
-  expirationInMS: number;
-  separator: string;
-  prefix: string;
-  axiosConfigPaths: string[];
-}
-
 enum EHttpMethod {
   GET = 'get',
   DELETE = 'delete',
@@ -21,4 +14,4 @@ enum EHttpMethod {
   UNLINK = 'unlink',
 }
 
-export { ERedisFlag, ICacheConfiguration, EHttpMethod };
+export { ERedisFlag, EHttpMethod };
