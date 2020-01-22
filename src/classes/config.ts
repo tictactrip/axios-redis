@@ -1,8 +1,8 @@
 interface ICacheConfiguration {
-  expirationInMS: number;
-  separator: string;
-  prefix: string;
-  axiosConfigPaths: string[];
+  expirationInMS?: number;
+  separator?: string;
+  prefix?: string;
+  axiosConfigPaths?: string[];
 }
 
 const defaultConfiguration: ICacheConfiguration = {
