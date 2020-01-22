@@ -1,12 +1,10 @@
 import { RedisClient } from 'redis';
-import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
+import axios, { AxiosRequestConfig, AxiosResponse, AxiosPromise } from 'axios';
 import * as _ from 'lodash';
 import * as flatted from 'flatted';
 import { promisify } from 'util';
 import { EHttpMethod, ERedisFlag } from './types';
 import { ICacheConfiguration, defaultConfiguration } from './config';
-
-let axiosRedisInstance: AxiosRedis;
 
 /**
  * @description AxiosRedis class.
@@ -29,8 +27,6 @@ export class AxiosRedis {
     this.config = { ...defaultConfiguration, ...config };
     this.redisSetAsync = promisify(this.redis.set).bind(this.redis);
     this.redisGetAsync = promisify(this.redis.get).bind(this.redis);
-
-    axiosRedisInstance = this;
   }
 
   /**
@@ -55,35 +51,37 @@ export class AxiosRedis {
   /**
    * @description Axios adapter.
    * @param {AxiosRequestConfig} config
+   * @param {AxiosRedis} axiosRedis
    * @returns {Promise<AxiosResponse>}
    */
-  async axiosAdapter(config: AxiosRequestConfig): Promise<AxiosResponse> {
+  // @ts-ignore
+  async axiosAdapter(config: AxiosRequestConfig, axiosRedis: AxiosRedis): AxiosPromise<any> {
     let response: AxiosResponse | null = null;
 
     try {
-      if (axiosRedisInstance.methodsToCache.includes(<EHttpMethod>config.method.toLowerCase())) {
-        const key = axiosRedisInstance.createKey(config);
+      if (axiosRedis.methodsToCache.includes(<EHttpMethod>config.method.toLowerCase())) {
+        const key = axiosRedis.createKey(config);
 
-        const data = await axiosRedisInstance.getCache(key);
+        const data = await axiosRedis.getCache(key);
 
         if (data) {
           return flatted.parse(data);
         }
 
         // Send the request and store the result in case of success
-        response = await axiosRedisInstance.fetch(config);
-        await axiosRedisInstance.setCache(key, response);
+        response = await axiosRedis.fetch(config);
+        await axiosRedis.setCache(key, response);
 
         return response;
       }
 
-      return axiosRedisInstance.fetch(config);
+      return axiosRedis.fetch(config);
     } catch (error) {
       if (error.isAxiosError) {
         throw error;
       }
 
-      return axiosRedisInstance.fetch(config);
+      return axiosRedis.fetch(config);
     }
   }
 
@@ -109,9 +107,9 @@ export class AxiosRedis {
   /**
    * @description Fetch with default adapter.
    * @param {AxiosRequestConfig} config
-   * @returns {Promise<AxiosResponse>}
+   * @returns {AxiosPromise}
    */
-  private fetch(config: AxiosRequestConfig): Promise<AxiosResponse> {
+  private fetch(config: AxiosRequestConfig): AxiosPromise {
     const axiosDefaultAdapter = axios.create(Object.assign(config, { adapter: axios.defaults.adapter }));
 
     return axiosDefaultAdapter.request(config);
