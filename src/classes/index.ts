@@ -1,11 +1,10 @@
 import { RedisClient } from 'redis';
-import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
+import axios, { AxiosRequestConfig, AxiosResponse, AxiosPromise } from 'axios';
 import * as _ from 'lodash';
 import * as flatted from 'flatted';
 import { promisify } from 'util';
-import { EHttpMethod, ERedisFlag, ICacheConfiguration } from './types';
-
-let axiosRedisInstance: AxiosRedis;
+import { EHttpMethod, ERedisFlag } from './types';
+import { ICacheConfiguration, defaultConfiguration } from './config';
 
 /**
  * @description AxiosRedis class.
@@ -15,7 +14,7 @@ export class AxiosRedis {
   private config: ICacheConfiguration;
   public redisSetAsync: (key: string, value: string, flag: ERedisFlag, expirationInMS: number) => Promise<string>;
   public redisGetAsync: (key: string) => Promise<string | null>;
-  public keyDoNotEncode: string[] = ['method'];
+  public keysToNotEncode: string[] = ['method'];
   public methodsToCache: EHttpMethod[] = [EHttpMethod.GET, EHttpMethod.POST];
 
   /**
@@ -23,13 +22,11 @@ export class AxiosRedis {
    * @param {RedisClient} redis
    * @param {ICacheConfiguration} config
    */
-  constructor(redis: RedisClient, config: ICacheConfiguration) {
+  constructor(redis: RedisClient, config: ICacheConfiguration = {}) {
     this.redis = redis;
-    this.config = config;
+    this.config = { ...defaultConfiguration, ...config };
     this.redisSetAsync = promisify(this.redis.set).bind(this.redis);
     this.redisGetAsync = promisify(this.redis.get).bind(this.redis);
-
-    axiosRedisInstance = this;
   }
 
   /**
@@ -54,35 +51,36 @@ export class AxiosRedis {
   /**
    * @description Axios adapter.
    * @param {AxiosRequestConfig} config
+   * @param {AxiosRedis} axiosRedis
    * @returns {Promise<AxiosResponse>}
    */
-  async axiosAdapter(config: AxiosRequestConfig): Promise<AxiosResponse> {
+  static async ADAPTER(config: AxiosRequestConfig, axiosRedis: AxiosRedis): Promise<AxiosResponse> {
     let response: AxiosResponse | null = null;
 
     try {
-      if (axiosRedisInstance.methodsToCache.includes(<EHttpMethod>config.method.toLowerCase())) {
-        const key = axiosRedisInstance.createKey(config);
+      if (axiosRedis.methodsToCache.includes(<EHttpMethod>config.method.toLowerCase())) {
+        const key = axiosRedis.createKey(config);
 
-        const data = await axiosRedisInstance.getCache(key);
+        const data = await axiosRedis.getCache(key);
 
         if (data) {
           return flatted.parse(data);
         }
 
         // Send the request and store the result in case of success
-        response = await axiosRedisInstance.fetch(config);
-        await axiosRedisInstance.setCache(key, response);
+        response = await axiosRedis.fetch(config);
+        await axiosRedis.setCache(key, response);
 
         return response;
       }
 
-      return axiosRedisInstance.fetch(config);
+      return axiosRedis.fetch(config);
     } catch (error) {
       if (error.isAxiosError) {
         throw error;
       }
 
-      return axiosRedisInstance.fetch(config);
+      return axiosRedis.fetch(config);
     }
   }
 
@@ -95,7 +93,7 @@ export class AxiosRedis {
     const arr = this.config.axiosConfigPaths.map((key: string) => {
       let value = flatted.stringify(_.get(axiosConfig, key));
 
-      if (!this.keyDoNotEncode.includes(key)) {
+      if (!this.keysToNotEncode.includes(key)) {
         return Buffer.from(value).toString('base64');
       }
 
@@ -108,9 +106,9 @@ export class AxiosRedis {
   /**
    * @description Fetch with default adapter.
    * @param {AxiosRequestConfig} config
-   * @returns {Promise<AxiosResponse>}
+   * @returns {AxiosPromise}
    */
-  private fetch(config: AxiosRequestConfig): Promise<AxiosResponse> {
+  private fetch(config: AxiosRequestConfig): AxiosPromise {
     const axiosDefaultAdapter = axios.create(Object.assign(config, { adapter: axios.defaults.adapter }));
 
     return axiosDefaultAdapter.request(config);
