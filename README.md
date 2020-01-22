@@ -37,7 +37,7 @@ const axiosRedis = new AxiosRedis(redis, {
 // Create your Axios instance
 const axiosInstance = axios.create({
   baseURL: 'http://api.example.com',
-  adapter: axiosRedis.axiosAdapter,
+  adapter: (config) => axiosRedis.ADAPTER(config, axiosRedis),
 });
 
 // Response will be cached on first call
