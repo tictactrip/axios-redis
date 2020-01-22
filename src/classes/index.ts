@@ -16,7 +16,7 @@ export class AxiosRedis {
   private config: ICacheConfiguration;
   public redisSetAsync: (key: string, value: string, flag: ERedisFlag, expirationInMS: number) => Promise<string>;
   public redisGetAsync: (key: string) => Promise<string | null>;
-  public keyDoNotEncode: string[] = ['method'];
+  public keysToNotEncode: string[] = ['method'];
   public methodsToCache: EHttpMethod[] = [EHttpMethod.GET, EHttpMethod.POST];
 
   /**
@@ -96,7 +96,7 @@ export class AxiosRedis {
     const arr = this.config.axiosConfigPaths.map((key: string) => {
       let value = flatted.stringify(_.get(axiosConfig, key));
 
-      if (!this.keyDoNotEncode.includes(key)) {
+      if (!this.keysToNotEncode.includes(key)) {
         return Buffer.from(value).toString('base64');
       }
 
