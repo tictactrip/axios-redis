@@ -13,10 +13,7 @@ describe('index.ts', () => {
     redis = redisClient.createClient({ host: 'redis' });
     redis.flushall('ASYNC');
     axiosRedis = new AxiosRedis(redis, {
-      expirationInMS: 30 * 1000,
       prefix: '@scope/package@1.0.1',
-      separator: '___',
-      axiosConfigPaths: ['method', 'url', 'params', 'data'],
     });
 
     axiosInstance = axios.create({
