@@ -25,7 +25,7 @@ describe('index.ts', () => {
       httpsAgent: new https.Agent({
         rejectUnauthorized: false,
       }),
-      adapter: config => axiosRedis.axiosAdapter(config, axiosRedis),
+      adapter: config => AxiosRedis.ADAPTER(config, axiosRedis),
     });
   });
 
@@ -95,7 +95,7 @@ describe('index.ts', () => {
           httpsAgent: new https.Agent({
             rejectUnauthorized: false,
           }),
-          adapter: config => axiosRedisRaw.axiosAdapter(config, axiosRedisRaw),
+          adapter: config => AxiosRedis.ADAPTER(config, axiosRedisRaw),
         });
 
         const axiosResponseSetCache =
@@ -203,7 +203,7 @@ describe('index.ts', () => {
           httpsAgent: new https.Agent({
             rejectUnauthorized: false,
           }),
-          adapter: config => axiosRedisRaw.axiosAdapter(config, axiosRedisRaw),
+          adapter: config => AxiosRedis.ADAPTER(config, axiosRedisRaw),
         });
 
         const axiosResponseSetCache =
