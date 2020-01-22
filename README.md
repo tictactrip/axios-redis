@@ -26,11 +26,11 @@ import { AxiosRedis } from '@tictactrip/axios-redis';
 // Redis connexion
 const redis = redisClient.createClient({ host: 'localhost' });
 
-// Create your AxiosRedis instance
+// Create your AxiosRedis instance (config parameter is optional)
 const axiosRedis = new AxiosRedis(redis, {
   expirationInMS: 30000,
-  prefix: '@tictactrip/package@1.0.0',
   separator: '___',
+  prefix: '@tictactrip/axios-redis',
   axiosConfigPaths: ['method', 'url', 'params', 'data'],
 });
 
@@ -49,7 +49,7 @@ await axiosInstance.get('/user?ID=12345');
 
 ### Which http methods are cached? 
 
-As default, all *GET* and *POST* responses are cached.
+As default, all **GET** and **POST** responses are cached.
 If you want to customize them, you can also do:
 
 ```ts 
