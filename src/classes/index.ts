@@ -54,8 +54,7 @@ export class AxiosRedis {
    * @param {AxiosRedis} axiosRedis
    * @returns {Promise<AxiosResponse>}
    */
-  // @ts-ignore
-  static async ADAPTER(config: AxiosRequestConfig, axiosRedis: AxiosRedis): AxiosPromise<any> {
+  static async ADAPTER(config: AxiosRequestConfig, axiosRedis: AxiosRedis): Promise<AxiosResponse> {
     let response: AxiosResponse | null = null;
 
     try {
