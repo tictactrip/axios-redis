@@ -24,7 +24,7 @@ export class AxiosRedis {
    * @param {RedisClient} redis
    * @param {ICacheConfiguration} config
    */
-  constructor(redis: RedisClient, config: ICacheConfiguration) {
+  constructor(redis: RedisClient, config: ICacheConfiguration = {}) {
     this.redis = redis;
     this.config = { ...defaultConfiguration, ...config };
     this.redisSetAsync = promisify(this.redis.set).bind(this.redis);
