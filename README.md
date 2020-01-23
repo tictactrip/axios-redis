@@ -72,6 +72,26 @@ Example:
 
 If you want to customize the keys, you just need to customize your `AxiosRedis` instance.
 
+## Tests
+
+How can I mock Redis connection with Jest in my unit tests?
+
+```ts
+import * as redis from 'redis';
+import { AxiosRedis } from '@tictactrip/axios-redis';
+
+describe('Example', () => {
+
+  it('should send the request without a redis connection', () => {
+    const redisClient = redis.createClient({ retry_strategy: jest.fn() });
+
+    const axiosRedisSpy = jest.spyOn(AxiosRedis.prototype, 'getCache')
+      .mockRejectedValue(new Error('Bypass Redis for tests'));
+      
+    // ...
+  });
+```
+
 ## Scripts
 
 Run using yarn run `<script>` command.
