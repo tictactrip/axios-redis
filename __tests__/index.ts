@@ -321,7 +321,7 @@ describe('index.ts', () => {
           {
             hello: 'world',
           },
-          { headers: { 'Axios-Redis-Cache-Duration': 0 } },
+          { headers: { 'Axios-Redis-Cache-Duration': null } },
         );
 
         apiNock.done();
