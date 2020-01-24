@@ -93,7 +93,6 @@ describe('index.ts', () => {
           .query({ param1: true, param2: 123 })
           .matchHeader('User-Agent', '@scope/package')
           .matchHeader('Api-Key', '3b48b9fd18ecca20ed5b0accbfeb6b70')
-          // .matchHeader('Axios-Redis-Cache-Duration', '90000')
           .reply(200, {
             success: true,
           });
