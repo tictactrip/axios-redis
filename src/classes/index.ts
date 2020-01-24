@@ -43,20 +43,16 @@ export class AxiosRedis {
    * @param {string} key
    * @param {AxiosResponse} data
    * @param {undefined | number} durationInMS
-   * @returns Promise<string>
+   * @returns Promise<string | void>
    */
-  async setCache(key: string, data: AxiosResponse, durationInMS: undefined | number): Promise<string> {
-    if (durationInMS === undefined) {
-      return this.redisSetAsync(key, flatted.stringify(data), ERedisFlag.EXPIRATION, this.config.expirationInMS);
-    }
-
-    if (durationInMS) {
-      return this.redisSetAsync(key, flatted.stringify(data), ERedisFlag.EXPIRATION, durationInMS);
-    }
-
+  async setCache(key: string, data: AxiosResponse, durationInMS: undefined | number): Promise<string | void> {
     if (durationInMS === 0) {
-      return '';
+      return;
     }
+
+    const duration = durationInMS || this.config.expirationInMS;
+
+    return this.redisSetAsync(key, flatted.stringify(data), ERedisFlag.EXPIRATION, duration);
   }
 
   /**
