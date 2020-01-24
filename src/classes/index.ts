@@ -42,11 +42,11 @@ export class AxiosRedis {
    * @description Caches data.
    * @param {string} key
    * @param {AxiosResponse} data
-   * @param {undefined | number} durationInMS
+   * @param {undefined | number | null} durationInMS
    * @returns Promise<string | void>
    */
-  async setCache(key: string, data: AxiosResponse, durationInMS: undefined | number): Promise<string | void> {
-    if (durationInMS === 0) {
+  async setCache(key: string, data: AxiosResponse, durationInMS: undefined | number | null): Promise<string | void> {
+    if (durationInMS === 0 || typeof durationInMS === 'object') {
       return;
     }
 
