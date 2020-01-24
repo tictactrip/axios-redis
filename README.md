@@ -78,7 +78,7 @@ If you want to customize the keys, you just need to customize your `AxiosRedis` 
 // This request won't be cached
 await axiosInstance.get('/user?ID=12345', { 
   headers: {
-    'Axios-Redis-Cache-Duration': 0,
+    'Axios-Redis-Cache-Duration': null,
   },
 });
 ```
