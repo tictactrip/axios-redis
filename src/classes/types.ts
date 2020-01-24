@@ -1,3 +1,7 @@
+enum EAxiosCacheHeaders {
+  CacheDuration = 'Axios-Redis-Cache-Duration',
+}
+
 enum ERedisFlag {
   EXPIRATION = 'EX',
 }
@@ -14,4 +18,4 @@ enum EHttpMethod {
   UNLINK = 'unlink',
 }
 
-export { ERedisFlag, EHttpMethod };
+export { ERedisFlag, EHttpMethod, EAxiosCacheHeaders };

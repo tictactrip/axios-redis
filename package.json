@@ -12,13 +12,13 @@
     "redis": "2.8.0"
   },
   "devDependencies": {
-    "@types/jest": "24.9.0",
+    "@types/jest": "24.9.1",
     "@types/node": "12.12.6",
     "@types/redis": "2.8.14",
     "jest": "25.1.0",
     "nock": "11.7.2",
     "prettier": "1.19.1",
-    "ts-jest": "24.3.0",
+    "ts-jest": "25.0.0",
     "tslint": "6.0.0",
     "tslint-config-prettier": "1.18.0",
     "tslint-microsoft-contrib": "6.2.0",
