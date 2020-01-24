@@ -303,7 +303,7 @@ describe('index.ts', () => {
 
   describe('Not cache', () => {
     describe('POST', () => {
-      it('should not cache (if "Axios-Redis-Cache-Duration" header is disabled)', async () => {
+      it('should not cache (if "Axios-Redis-Cache-Duration" header = null)', async () => {
         const apiNock = nock('https://api.example.com')
           .post('/example/1', { hello: 'world' })
           .query({ sort: 'desc' })
@@ -334,10 +334,70 @@ describe('index.ts', () => {
         expect(response.status).toEqual(200);
         expect(response.data).toStrictEqual({ success: true });
       });
+
+      it('should not cache (if "Axios-Redis-Cache-Duration" header = 0)', async () => {
+        const apiNock = nock('https://api.example.com')
+          .post('/example/1', { hello: 'world' })
+          .query({ sort: 'desc' })
+          .matchHeader('User-Agent', '@scope/package')
+          .matchHeader('Api-Key', '3b48b9fd18ecca20ed5b0accbfeb6b70')
+          .reply(200, {
+            success: true,
+          });
+
+        const redisSetAsyncSpy = jest.spyOn(axiosRedis, 'redisSetAsync');
+        const redisGetAsyncSpy = jest.spyOn(axiosRedis, 'redisGetAsync');
+
+        const response = await axiosInstance.post(
+          '/example/1?sort=desc',
+          {
+            hello: 'world',
+          },
+          { headers: { 'Axios-Redis-Cache-Duration': 0 } },
+        );
+
+        apiNock.done();
+        expect(redisSetAsyncSpy).toBeCalledTimes(0);
+        expect(redisGetAsyncSpy).toBeCalledTimes(1);
+        expect(redisGetAsyncSpy).nthCalledWith(
+          1,
+          '@scope/package@1.0.1___["post"]___WyIvZXhhbXBsZS8xP3NvcnQ9ZGVzYyJd___W10=___WyJ7XCJoZWxsb1wiOlwid29ybGRcIn0iXQ==',
+        );
+        expect(response.status).toEqual(200);
+        expect(response.data).toStrictEqual({ success: true });
+      });
     });
 
     describe('GET', () => {
-      it('should not cache (if "Axios-Redis-Cache-Duration" header is disabled)', async () => {
+      it('should not cache (if "Axios-Redis-Cache-Duration" header = null)', async () => {
+        const apiNock = nock('https://api.example.com')
+          .get('/example/1')
+          .query({ sort: 'desc' })
+          .matchHeader('User-Agent', '@scope/package')
+          .matchHeader('Api-Key', '3b48b9fd18ecca20ed5b0accbfeb6b70')
+          .reply(200, {
+            success: true,
+          });
+
+        const redisSetAsyncSpy = jest.spyOn(axiosRedis, 'redisSetAsync');
+        const redisGetAsyncSpy = jest.spyOn(axiosRedis, 'redisGetAsync');
+
+        const response = await axiosInstance.get('/example/1?sort=desc', {
+          headers: { 'Axios-Redis-Cache-Duration': null },
+        });
+
+        apiNock.done();
+        expect(redisSetAsyncSpy).toBeCalledTimes(0);
+        expect(redisGetAsyncSpy).toBeCalledTimes(1);
+        expect(redisGetAsyncSpy).nthCalledWith(
+          1,
+          '@scope/package@1.0.1___["get"]___WyIvZXhhbXBsZS8xP3NvcnQ9ZGVzYyJd___W10=___W10=',
+        );
+        expect(response.status).toEqual(200);
+        expect(response.data).toStrictEqual({ success: true });
+      });
+
+      it('should not cache (if "Axios-Redis-Cache-Duration" header = 0)', async () => {
         const apiNock = nock('https://api.example.com')
           .get('/example/1')
           .query({ sort: 'desc' })
