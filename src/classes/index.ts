@@ -3,7 +3,7 @@ import axios, { AxiosRequestConfig, AxiosResponse, AxiosPromise } from 'axios';
 import * as _ from 'lodash';
 import * as flatted from 'flatted';
 import { promisify } from 'util';
-import { EHttpMethod, ERedisFlag } from './types';
+import { EHttpMethod, ERedisFlag, EAxiosCacheHeaders } from './types';
 import { ICacheConfiguration, defaultConfiguration } from './config';
 
 /**
@@ -12,7 +12,7 @@ import { ICacheConfiguration, defaultConfiguration } from './config';
 export class AxiosRedis {
   private readonly redis: RedisClient;
   private config: ICacheConfiguration;
-  public redisSetAsync: (key: string, value: string, flag: ERedisFlag, expirationInMS: number) => Promise<string>;
+  public redisSetAsync: (key: string, value: string, flag?: ERedisFlag, expirationInMS?: number) => Promise<string>;
   public redisGetAsync: (key: string) => Promise<string | null>;
   public keysToNotEncode: string[] = ['method'];
   public methodsToCache: EHttpMethod[] = [EHttpMethod.GET, EHttpMethod.POST];
@@ -42,10 +42,21 @@ export class AxiosRedis {
    * @description Caches data.
    * @param {string} key
    * @param {AxiosResponse} data
+   * @param {undefined | number} durationInMS
    * @returns Promise<string>
    */
-  setCache(key: string, data: AxiosResponse): Promise<string> {
-    return this.redisSetAsync(key, flatted.stringify(data), ERedisFlag.EXPIRATION, this.config.expirationInMS);
+  async setCache(key: string, data: AxiosResponse, durationInMS: undefined | number): Promise<string> {
+    if (durationInMS === undefined) {
+      return this.redisSetAsync(key, flatted.stringify(data), ERedisFlag.EXPIRATION, this.config.expirationInMS);
+    }
+
+    if (durationInMS) {
+      return this.redisSetAsync(key, flatted.stringify(data), ERedisFlag.EXPIRATION, durationInMS);
+    }
+
+    if (durationInMS === 0) {
+      return '';
+    }
   }
 
   /**
@@ -68,8 +79,9 @@ export class AxiosRedis {
         }
 
         // Send the request and store the result in case of success
+        const cacheDuration = config.headers[EAxiosCacheHeaders.CacheDuration];
         response = await axiosRedis.fetch(config);
-        await axiosRedis.setCache(key, response);
+        await axiosRedis.setCache(key, response, cacheDuration);
 
         return response;
       }
@@ -109,6 +121,8 @@ export class AxiosRedis {
    * @returns {AxiosPromise}
    */
   private fetch(config: AxiosRequestConfig): AxiosPromise {
+    delete config.headers[EAxiosCacheHeaders.CacheDuration];
+
     const axiosDefaultAdapter = axios.create(Object.assign(config, { adapter: axios.defaults.adapter }));
 
     return axiosDefaultAdapter.request(config);
