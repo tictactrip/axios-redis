@@ -16,7 +16,7 @@ This repository provides an Axios Redis cache adapter.
 yarn add @tictactrip/axios-redis
 ```
 
-## How to use it?
+## Example
 
 ```ts
 import * as redis from 'redis';
@@ -47,7 +47,7 @@ await axiosInstance.get('/user?ID=12345');
 await axiosInstance.get('/user?ID=12345');
 ```
 
-### Which http methods are cached? 
+### HTTP methods cached 
 
 As default, all **GET** and **POST** responses are cached.
 If you want to customize them, you can also do:
@@ -56,7 +56,7 @@ If you want to customize them, you can also do:
 axiosRedis.methodsToCache = [EHttpMethod.GET];
 ```
 
-### What's the key structure?
+### Key structure
 
 As default, keys have bellow pattern:
 
@@ -72,7 +72,29 @@ Example:
 
 If you want to customize the keys, you just need to customize your `AxiosRedis` instance.
 
-## Tests
+### Disable cache for one request
+
+```ts
+// This request won't be cached
+await axiosInstance.get('/user?ID=12345', { 
+  headers: {
+    'Axios-Redis-Cache-Duration': 0,
+  },
+});
+```
+
+### Customize cache duration for one request
+
+```ts
+// This request will be cached during 90000ms
+await axiosInstance.get('/user?ID=12345', { 
+  headers: {
+    'Axios-Redis-Cache-Duration': 90000,
+  },
+});
+```
+
+### Tests
 
 How can I mock Redis connection with Jest in my unit tests?
 
@@ -81,7 +103,6 @@ import * as redis from 'redis';
 import { AxiosRedis } from '@tictactrip/axios-redis';
 
 describe('Example', () => {
-
   it('should send the request without a redis connection', () => {
     const redisClient = redis.createClient({ retry_strategy: jest.fn() });
 
@@ -90,6 +111,7 @@ describe('Example', () => {
       
     // ...
   });
+});
 ```
 
 ## Scripts
