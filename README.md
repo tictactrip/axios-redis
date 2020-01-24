@@ -58,7 +58,7 @@ axiosRedis.methodsToCache = [EHttpMethod.GET];
 
 ### Key structure
 
-As default, keys have bellow pattern:
+By default, redis keys follow this pattern
 
 ```ts
 {prefix}___{http_method}___{axios_config_url}___base64{axios_config_params}___base64{axios_config_data}
