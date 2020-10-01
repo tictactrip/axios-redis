@@ -52,7 +52,7 @@ export class AxiosRedis {
 
     const duration = durationInMS || this.config.expirationInMS;
 
-    return this.redisSetAsync(key, flatted.stringify(data), ERedisFlag.EXPIRATION, duration);
+    return this.redisSetAsync(key, flatted.stringify(data), ERedisFlag.EXPIRATION_IN_MS, duration);
   }
 
   /**

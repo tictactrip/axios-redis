@@ -3,7 +3,7 @@ enum EAxiosCacheHeaders {
 }
 
 enum ERedisFlag {
-  EXPIRATION = 'EX',
+  EXPIRATION_IN_MS = 'PX',
 }
 
 enum EHttpMethod {
