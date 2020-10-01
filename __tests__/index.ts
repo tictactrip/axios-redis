@@ -65,7 +65,7 @@ describe('index.ts', () => {
           1,
           '@scope/package@1.0.1___["get"]___WyIvZXhhbXBsZTE/cGFyYW0xPXRydWUmcGFyYW0yPTEyMyJd___W10=___W10=',
           axiosResponseSetCache,
-          'EX',
+          'PX',
           30000,
         );
         expect(redisGetAsyncSpy).toBeCalledTimes(2);
@@ -114,7 +114,7 @@ describe('index.ts', () => {
           1,
           '@scope/package@1.0.1___["get"]___WyIvZXhhbXBsZTI/cGFyYW0xPXRydWUmcGFyYW0yPTEyMyJd___W10=___W10=',
           axiosResponseSetCache,
-          'EX',
+          'PX',
           90000,
         );
         expect(redisGetAsyncSpy).toBeCalledTimes(2);
@@ -175,7 +175,7 @@ describe('index.ts', () => {
           1,
           '@tictactrip/axios-redis___["get"]___WyIvZXhhbXBsZTE/cGFyYW0xPXRydWUmcGFyYW0yPTEyMyJd___W10=___W10=',
           axiosResponseSetCache,
-          'EX',
+          'PX',
           30000,
         );
         expect(redisGetAsyncSpy).toBeCalledTimes(2);
@@ -222,7 +222,7 @@ describe('index.ts', () => {
           1,
           '@scope/package@1.0.1___["post"]___WyIvZXhhbXBsZTE/cGFyYW0xPXRydWUmcGFyYW0yPTEyMyJd___W10=___WyJ7XCJoZWxsb1wiOlwid29ybGRcIn0iXQ==',
           axiosResponseSetCache,
-          'EX',
+          'PX',
           30000,
         );
         expect(redisGetAsyncSpy).toBeCalledTimes(2);
@@ -281,7 +281,7 @@ describe('index.ts', () => {
           1,
           '@tictactrip/axios-redis___["post"]___WyIvZXhhbXBsZTE/cGFyYW0xPXRydWUmcGFyYW0yPTEyMyJd___W10=___WyJ7XCJoZWxsb1wiOlwid29ybGRcIn0iXQ==',
           axiosResponseSetCache,
-          'EX',
+          'PX',
           30000,
         );
         expect(redisGetAsyncSpy).toBeCalledTimes(2);
