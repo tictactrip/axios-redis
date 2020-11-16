@@ -1,5 +1,5 @@
 import { RedisClient } from 'redis';
-import axios, { AxiosRequestConfig, AxiosResponse, AxiosPromise } from 'axios';
+import axios, { AxiosRequestConfig, AxiosResponse, AxiosPromise, AxiosInstance } from 'axios';
 import * as _ from 'lodash';
 import * as flatted from 'flatted';
 import { promisify } from 'util';
@@ -50,7 +50,7 @@ export class AxiosRedis {
       return;
     }
 
-    const duration = durationInMS || this.config.expirationInMS;
+    const duration: number = durationInMS || this.config.expirationInMS;
 
     return this.redisSetAsync(key, flatted.stringify(data), ERedisFlag.EXPIRATION_IN_MS, duration);
   }
@@ -66,16 +66,16 @@ export class AxiosRedis {
 
     try {
       if (axiosRedis.methodsToCache.includes(<EHttpMethod>config.method.toLowerCase())) {
-        const key = axiosRedis.createKey(config);
+        const key: string = axiosRedis.createKey(config);
 
-        const data = await axiosRedis.getCache(key);
+        const data: string | null = await axiosRedis.getCache(key);
 
         if (data) {
           return flatted.parse(data);
         }
 
         // Send the request and store the result in case of success
-        const cacheDuration = config.headers[EAxiosCacheHeaders.CacheDuration];
+        const cacheDuration: number = config.headers[EAxiosCacheHeaders.CacheDuration];
         response = await axiosRedis.fetch(config);
         await axiosRedis.setCache(key, response, cacheDuration);
 
@@ -98,8 +98,8 @@ export class AxiosRedis {
    * @returns {string}
    */
   private createKey(axiosConfig: AxiosRequestConfig): string {
-    const arr = this.config.axiosConfigPaths.map((key: string) => {
-      let value = flatted.stringify(_.get(axiosConfig, key));
+    const arr: string[] = this.config.axiosConfigPaths.map((key: string) => {
+      const value: string = flatted.stringify(_.get(axiosConfig, key));
 
       if (!this.keysToNotEncode.includes(key)) {
         return Buffer.from(value).toString('base64');
@@ -119,7 +119,7 @@ export class AxiosRedis {
   private fetch(config: AxiosRequestConfig): AxiosPromise {
     delete config.headers[EAxiosCacheHeaders.CacheDuration];
 
-    const axiosDefaultAdapter = axios.create(Object.assign(config, { adapter: axios.defaults.adapter }));
+    const axiosDefaultAdapter: AxiosInstance = axios.create(Object.assign(config, { adapter: axios.defaults.adapter }));
 
     return axiosDefaultAdapter.request(config);
   }

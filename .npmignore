@@ -1,10 +1,2 @@
-src
-__tests__
-coverage
-.editorconfig
-.prettierrc
-*.json
-*.config.js
-*.lock
-*.yml
-*.log
+*
+!dist/**/*
