@@ -1,11 +1,17 @@
 {
   "compilerOptions": {
-    "target": "esnext",
+    "allowSyntheticDefaultImports": true,
+    "baseUrl": ".",
+    "outDir": "dist",
+    "lib": ["ES2019"],
+    "target": "ES2019",
     "module": "commonjs",
     "moduleResolution": "node",
     "alwaysStrict": true,
     "sourceMap": true,
-    "declaration": true
+    "resolveJsonModule": true,
+    "declaration": true,
+    "noUnusedLocals": true
   },
-  "include": ["src/**/*", "tests/**/*"]
+  "include": ["src/**/*.ts"]
 }
