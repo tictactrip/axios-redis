@@ -6,7 +6,7 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "dependencies": {
-    "axios": "0.21.0",
+    "axios": "0.21.1",
     "flatted": "3.1.0",
     "lodash": "4.17.20",
     "redis": "3.0.2"
