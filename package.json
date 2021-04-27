@@ -9,7 +9,7 @@
     "axios": "0.21.0",
     "flatted": "3.1.0",
     "lodash": "4.17.20",
-    "redis": "3.0.2"
+    "redis": "3.1.1"
   },
   "devDependencies": {
     "@types/jest": "26.0.15",
