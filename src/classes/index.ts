@@ -5,6 +5,7 @@ import * as flatted from 'flatted';
 import { promisify } from 'util';
 import { EHttpMethod, ERedisFlag, EAxiosCacheHeaders } from './types';
 import { ICacheConfiguration, defaultConfiguration } from './config';
+import { compress, decompress } from '../utils/compression';
 
 /**
  * @description AxiosRedis class.
@@ -34,8 +35,14 @@ export class AxiosRedis {
    * @param {string} key
    * @returns {Promise<string|null>}
    */
-  getCache(key: string): Promise<string | null> {
-    return this.redisGetAsync(key);
+  async getCache(key: string): Promise<string | null> {
+    const data = await this.redisGetAsync(key);
+
+    if (data) {
+      return decompress(data);
+    } else {
+      return data;
+    }
   }
 
   /**
@@ -58,7 +65,9 @@ export class AxiosRedis {
 
     duration = duration || this.config.expirationInMS;
 
-    return this.redisSetAsync(key, flatted.stringify(data), ERedisFlag.EXPIRATION_IN_MS, duration);
+    const compressedData: string = await compress(flatted.stringify(data));
+
+    return this.redisSetAsync(key, compressedData, ERedisFlag.EXPIRATION_IN_MS, duration);
   }
 
   /**
