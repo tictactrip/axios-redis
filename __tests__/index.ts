@@ -389,10 +389,7 @@ describe('index.ts', () => {
         apiNock.done();
         expect(redisSetAsyncSpy).toBeCalledTimes(0);
         expect(redisGetAsyncSpy).toBeCalledTimes(1);
-        expect(redisGetAsyncSpy).nthCalledWith(
-          1,
-          '@scope/package@1.0.1___["get"]___WyIvZXhhbXBsZS8xP3NvcnQ9ZGVzYyJd___W10=___W10=',
-        );
+        expect(redisGetAsyncSpy).nthCalledWith(1, '@scope/package@1.0.1___["get"]___WyIvZXhhbXBsZS8xP3NvcnQ9ZGVzYyJd___W10=___W10=');
         expect(response.status).toEqual(200);
         expect(response.data).toStrictEqual({ success: true });
       });
@@ -417,10 +414,7 @@ describe('index.ts', () => {
         apiNock.done();
         expect(redisSetAsyncSpy).toBeCalledTimes(0);
         expect(redisGetAsyncSpy).toBeCalledTimes(1);
-        expect(redisGetAsyncSpy).nthCalledWith(
-          1,
-          '@scope/package@1.0.1___["get"]___WyIvZXhhbXBsZS8xP3NvcnQ9ZGVzYyJd___W10=___W10=',
-        );
+        expect(redisGetAsyncSpy).nthCalledWith(1, '@scope/package@1.0.1___["get"]___WyIvZXhhbXBsZS8xP3NvcnQ9ZGVzYyJd___W10=___W10=');
         expect(response.status).toEqual(200);
         expect(response.data).toStrictEqual({ success: true });
       });
@@ -523,9 +517,7 @@ describe('index.ts', () => {
         });
 
       const redisSetAsyncSpy = jest.spyOn(axiosRedis, 'redisSetAsync');
-      const redisGetAsyncSpy = jest
-        .spyOn(axiosRedis, 'redisGetAsync')
-        .mockRejectedValue(new Error('Unexpected error.'));
+      const redisGetAsyncSpy = jest.spyOn(axiosRedis, 'redisGetAsync').mockRejectedValue(new Error('Unexpected error.'));
 
       // tslint:disable-next-line:no-backbone-get-set-outside-model
       const response = await axiosInstance.get('/example4?param1=true&param2=123');
