@@ -1,6 +1,6 @@
 {
   "name": "@tictactrip/axios-redis",
-  "version": "1.6.0",
+  "version": "2.0.0",
   "description": "Axios Redis cache middleware",
   "author": "Tictactrip <dev@tictactrip.eu>",
   "main": "dist/index.js",
