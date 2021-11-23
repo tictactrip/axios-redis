@@ -45,12 +45,18 @@ export class AxiosRedis {
    * @param {undefined | number | null} durationInMS
    * @returns Promise<string | void>
    */
-  async setCache(key: string, data: AxiosResponse, durationInMS: undefined | number | null): Promise<string | void> {
-    if (durationInMS === 0 || typeof durationInMS === 'object') {
+  async setCache(key: string, data: AxiosResponse, durationInMS: undefined | number | string | null): Promise<string | void> {
+    if (durationInMS === 0 || typeof durationInMS === 'object' || typeof durationInMS === null || durationInMS === '0') {
       return;
     }
 
-    const duration: number = durationInMS || this.config.expirationInMS;
+    let duration: number;
+
+    if (typeof durationInMS === 'string') {
+      duration = parseInt(durationInMS, 10);
+    }
+
+    duration = duration || this.config.expirationInMS;
 
     return this.redisSetAsync(key, flatted.stringify(data), ERedisFlag.EXPIRATION_IN_MS, duration);
   }
@@ -75,7 +81,7 @@ export class AxiosRedis {
         }
 
         // Send the request and store the result in case of success
-        const cacheDuration: number = config.headers[EAxiosCacheHeaders.CacheDuration];
+        const cacheDuration: string | number = config.headers[EAxiosCacheHeaders.CacheDuration];
         response = await axiosRedis.fetch(config);
         await axiosRedis.setCache(key, response, cacheDuration);
 
