@@ -1,6 +1,5 @@
 # axios-redis
 
-[![Dependencies][prod-dependencies-badge]][prod-dependencies]
 [![Coverage][coverage-badge]][coverage]
 [![Build Status][travis-badge]][travis-ci]
 [![License][license-badge]][LICENSE]
@@ -8,7 +7,8 @@
 
 ## Description
 
-This repository provides an Axios Redis cache adapter.
+This repository provides a smart and powerful Axios Redis cache adapter.
+Cached data is compressed with zlib and Brotli.
 
 ## Install
 
@@ -129,8 +129,6 @@ Run using yarn run `<script>` command.
 
 GPL-3.0 © [Tictactrip](https://www.tictactrip.eu)
 
-[prod-dependencies-badge]: https://david-dm.org/tictactrip/axios-redis/status.svg
-[prod-dependencies]: https://david-dm.org/tictactrip/axios-redis
 [coverage-badge]: https://codecov.io/gh/tictactrip/axios-redis/branch/master/graph/badge.svg
 [coverage]: https://codecov.io/gh/tictactrip/axios-redis
 [travis-badge]: https://travis-ci.org/tictactrip/axios-redis.svg?branch=master

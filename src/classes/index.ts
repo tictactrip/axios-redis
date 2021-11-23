@@ -5,6 +5,7 @@ import * as flatted from 'flatted';
 import { promisify } from 'util';
 import { EHttpMethod, ERedisFlag, EAxiosCacheHeaders } from './types';
 import { ICacheConfiguration, defaultConfiguration } from './config';
+import { compress, decompress } from '../utils/compression';
 
 /**
  * @description AxiosRedis class.
@@ -34,8 +35,14 @@ export class AxiosRedis {
    * @param {string} key
    * @returns {Promise<string|null>}
    */
-  getCache(key: string): Promise<string | null> {
-    return this.redisGetAsync(key);
+  async getCache(key: string): Promise<string | null> {
+    const data = await this.redisGetAsync(key);
+
+    if (data) {
+      return decompress(data);
+    } else {
+      return data;
+    }
   }
 
   /**
@@ -45,14 +52,22 @@ export class AxiosRedis {
    * @param {undefined | number | null} durationInMS
    * @returns Promise<string | void>
    */
-  async setCache(key: string, data: AxiosResponse, durationInMS: undefined | number | null): Promise<string | void> {
-    if (durationInMS === 0 || typeof durationInMS === 'object') {
+  async setCache(key: string, data: AxiosResponse, durationInMS: undefined | number | string | null): Promise<string | void> {
+    if (durationInMS === 0 || typeof durationInMS === 'object' || typeof durationInMS === null || durationInMS === '0') {
       return;
     }
 
-    const duration: number = durationInMS || this.config.expirationInMS;
+    let duration: number;
 
-    return this.redisSetAsync(key, flatted.stringify(data), ERedisFlag.EXPIRATION_IN_MS, duration);
+    if (typeof durationInMS === 'string') {
+      duration = parseInt(durationInMS, 10);
+    }
+
+    duration = duration || this.config.expirationInMS;
+
+    const compressedData: string = await compress(flatted.stringify(data));
+
+    return this.redisSetAsync(key, compressedData, ERedisFlag.EXPIRATION_IN_MS, duration);
   }
 
   /**
@@ -75,7 +90,7 @@ export class AxiosRedis {
         }
 
         // Send the request and store the result in case of success
-        const cacheDuration: number = config.headers[EAxiosCacheHeaders.CacheDuration];
+        const cacheDuration: string | number = config.headers[EAxiosCacheHeaders.CacheDuration];
         response = await axiosRedis.fetch(config);
         await axiosRedis.setCache(key, response, cacheDuration);
 
