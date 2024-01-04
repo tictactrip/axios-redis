@@ -8,7 +8,7 @@
 ## Description
 
 This repository provides a smart and powerful Axios Redis cache adapter.
-Cached data is compressed with zlib and Brotli.
+Cached data is compressed with [zlib](https://nodejs.org/api/zlib.html) and [Brotli](https://nodejs.org/api/zlib.html#class-brotlioptions).
 
 ## Install
 
