@@ -1,7 +1,7 @@
-import { RedisClient } from 'redis';
+import { RedisClientType } from 'redis';
 import axios, { AxiosRequestConfig, AxiosResponse, AxiosPromise, AxiosInstance } from 'axios';
-import * as _ from 'lodash';
-import * as flatted from 'flatted';
+import get from 'lodash.get';
+import flatted from 'flatted';
 import { promisify } from 'util';
 import { EHttpMethod, ERedisFlag, EAxiosCacheHeaders } from './types';
 import { ICacheConfiguration, defaultConfiguration } from './config';
@@ -11,7 +11,7 @@ import { compress, decompress } from '../utils/compression';
  * @description AxiosRedis class.
  */
 export class AxiosRedis {
-  private readonly redis: RedisClient;
+  private readonly redis: RedisClientType;
   private config: ICacheConfiguration;
   public redisSetAsync: (key: string, value: string, flag?: ERedisFlag, expirationInMS?: number) => Promise<string>;
   public redisGetAsync: (key: string) => Promise<string | null>;
@@ -20,10 +20,10 @@ export class AxiosRedis {
 
   /**
    * @constructor
-   * @param {RedisClient} redis
+   * @param {RedisClientType} redis
    * @param {ICacheConfiguration} config
    */
-  constructor(redis: RedisClient, config: ICacheConfiguration = {}) {
+  constructor(redis: RedisClientType, config: ICacheConfiguration = {}) {
     this.redis = redis;
     this.config = { ...defaultConfiguration, ...config };
     this.redisSetAsync = promisify(this.redis.set).bind(this.redis);
@@ -114,7 +114,7 @@ export class AxiosRedis {
    */
   private createKey(axiosConfig: AxiosRequestConfig): string {
     const arr: string[] = this.config.axiosConfigPaths.map((key: string) => {
-      const value: string = flatted.stringify(_.get(axiosConfig, key));
+      const value: string = flatted.stringify(get(axiosConfig, key));
 
       if (!this.keysToNotEncode.includes(key)) {
         return Buffer.from(value).toString('base64');

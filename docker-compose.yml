@@ -2,7 +2,7 @@ version: '3.3'
 
 services:
   tests:
-    image: node:12
+    image: node:20.10.0
     depends_on:
       - redis
     networks:
@@ -13,9 +13,9 @@ services:
     command: sh -c 'yarn jest --coverage --force-exit'
 
   redis:
-    image: redis
+    image: redis:7-alpine
     ports:
-      - 6379:6379
+      - "6379:6379"
     networks:
       - test-network
 
