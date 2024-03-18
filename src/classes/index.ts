@@ -1,8 +1,7 @@
-import { RedisClientType } from 'redis';
+import Redis from 'ioredis';
 import axios, { AxiosRequestConfig, AxiosResponse, AxiosPromise, AxiosInstance } from 'axios';
 import get from 'lodash.get';
 import flatted from 'flatted';
-import { promisify } from 'util';
 import { EHttpMethod, ERedisFlag, EAxiosCacheHeaders } from './types';
 import { ICacheConfiguration, defaultConfiguration } from './config';
 import { compress, decompress } from '../utils/compression';
@@ -11,10 +10,8 @@ import { compress, decompress } from '../utils/compression';
  * @description AxiosRedis class.
  */
 export class AxiosRedis {
-  private readonly redis: RedisClientType;
   private config: ICacheConfiguration;
-  public redisSetAsync: (key: string, value: string, flag?: ERedisFlag, expirationInMS?: number) => Promise<string>;
-  public redisGetAsync: (key: string) => Promise<string | null>;
+  public readonly redis: Redis;
   public keysToNotEncode: string[] = ['method'];
   public methodsToCache: EHttpMethod[] = [EHttpMethod.GET, EHttpMethod.POST];
 
@@ -23,11 +20,9 @@ export class AxiosRedis {
    * @param {RedisClientType} redis
    * @param {ICacheConfiguration} config
    */
-  constructor(redis: RedisClientType, config: ICacheConfiguration = {}) {
+  constructor(redis: Redis, config: ICacheConfiguration = {}) {
     this.redis = redis;
     this.config = { ...defaultConfiguration, ...config };
-    this.redisSetAsync = promisify(this.redis.set).bind(this.redis);
-    this.redisGetAsync = promisify(this.redis.get).bind(this.redis);
   }
 
   /**
@@ -36,7 +31,7 @@ export class AxiosRedis {
    * @returns {Promise<string|null>}
    */
   async getCache(key: string): Promise<string | null> {
-    const data = await this.redisGetAsync(key);
+    const data = await this.redis.get(key);
 
     if (data) {
       return decompress(data);
@@ -67,7 +62,7 @@ export class AxiosRedis {
 
     const compressedData: string = await compress(flatted.stringify(data));
 
-    return this.redisSetAsync(key, compressedData, ERedisFlag.EXPIRATION_IN_MS, duration);
+    return this.redis.set(key, compressedData, ERedisFlag.EXPIRATION_IN_MS, duration);
   }
 
   /**
