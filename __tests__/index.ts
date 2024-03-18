@@ -1,21 +1,17 @@
 import nock from 'nock';
-import * as redisClient from 'redis';
+import Redis from 'ioredis';
 import axios, { AxiosInstance } from 'axios';
 import * as https from 'https';
 import { AxiosRedis } from '../src';
 
 describe('index.ts', () => {
-  let redis: redisClient.RedisClientType;
+  let redis: Redis;
   let axiosRedis: AxiosRedis;
   let axiosInstance: AxiosInstance;
 
   beforeAll(async () => {
-    redis = redisClient.createClient({
-      url: 'redis://:@redis:6379',
-      legacyMode: true,
-    });
-    await redis.connect();
-    await redis.flushAll();
+    redis = new Redis('redis://:@redis:6379');
+    await redis.flushall();
     axiosRedis = new AxiosRedis(redis, {
       prefix: '@scope/package@1.0.1',
     });
@@ -54,8 +50,8 @@ describe('index.ts', () => {
             success: true,
           });
 
-        const redisSetAsyncSpy = jest.spyOn(axiosRedis, 'redisSetAsync');
-        const redisGetAsyncSpy = jest.spyOn(axiosRedis, 'redisGetAsync');
+        const redisSetAsyncSpy = jest.spyOn(axiosRedis.redis, 'set');
+        const redisGetAsyncSpy = jest.spyOn(axiosRedis.redis, 'get');
 
         // tslint:disable-next-line:no-backbone-get-set-outside-model
         const response = await axiosInstance.get('/example1?param1=true&param2=123');
@@ -101,8 +97,8 @@ describe('index.ts', () => {
             success: true,
           });
 
-        const redisSetAsyncSpy = jest.spyOn(axiosRedis, 'redisSetAsync');
-        const redisGetAsyncSpy = jest.spyOn(axiosRedis, 'redisGetAsync');
+        const redisSetAsyncSpy = jest.spyOn(axiosRedis.redis, 'set');
+        const redisGetAsyncSpy = jest.spyOn(axiosRedis.redis, 'get');
 
         // tslint:disable-next-line:no-backbone-get-set-outside-model
         const response = await axiosInstance.get('/example2?param1=true&param2=123', {
@@ -164,8 +160,8 @@ describe('index.ts', () => {
             success: true,
           });
 
-        const redisSetAsyncSpy = jest.spyOn(axiosRedisRaw, 'redisSetAsync');
-        const redisGetAsyncSpy = jest.spyOn(axiosRedisRaw, 'redisGetAsync');
+        const redisSetAsyncSpy = jest.spyOn(axiosRedisRaw.redis, 'set');
+        const redisGetAsyncSpy = jest.spyOn(axiosRedisRaw.redis, 'get');
 
         // tslint:disable-next-line:no-backbone-get-set-outside-model
         const response = await axiosInstanceRaw.get('/example1?param1=true&param2=123');
@@ -212,8 +208,8 @@ describe('index.ts', () => {
             success: true,
           });
 
-        const redisSetAsyncSpy = jest.spyOn(axiosRedis, 'redisSetAsync');
-        const redisGetAsyncSpy = jest.spyOn(axiosRedis, 'redisGetAsync');
+        const redisSetAsyncSpy = jest.spyOn(axiosRedis.redis, 'set');
+        const redisGetAsyncSpy = jest.spyOn(axiosRedis.redis, 'get');
 
         const response = await axiosInstance.post('/example1?param1=true&param2=123', { hello: 'world' });
 
@@ -271,8 +267,8 @@ describe('index.ts', () => {
             success: true,
           });
 
-        const redisSetAsyncSpy = jest.spyOn(axiosRedisRaw, 'redisSetAsync');
-        const redisGetAsyncSpy = jest.spyOn(axiosRedisRaw, 'redisGetAsync');
+        const redisSetAsyncSpy = jest.spyOn(axiosRedisRaw.redis, 'set');
+        const redisGetAsyncSpy = jest.spyOn(axiosRedisRaw.redis, 'get');
 
         const response = await axiosInstanceRaw.post('/example1?param1=true&param2=123', { hello: 'world' });
 
@@ -317,8 +313,8 @@ describe('index.ts', () => {
             success: true,
           });
 
-        const redisSetAsyncSpy = jest.spyOn(axiosRedis, 'redisSetAsync');
-        const redisGetAsyncSpy = jest.spyOn(axiosRedis, 'redisGetAsync');
+        const redisSetAsyncSpy = jest.spyOn(axiosRedis.redis, 'set');
+        const redisGetAsyncSpy = jest.spyOn(axiosRedis.redis, 'get');
 
         const response = await axiosInstance.post(
           '/example/1?sort=desc',
@@ -349,8 +345,8 @@ describe('index.ts', () => {
             success: true,
           });
 
-        const redisSetAsyncSpy = jest.spyOn(axiosRedis, 'redisSetAsync');
-        const redisGetAsyncSpy = jest.spyOn(axiosRedis, 'redisGetAsync');
+        const redisSetAsyncSpy = jest.spyOn(axiosRedis.redis, 'set');
+        const redisGetAsyncSpy = jest.spyOn(axiosRedis.redis, 'get');
 
         const response = await axiosInstance.post(
           '/example/1?sort=desc',
@@ -383,8 +379,8 @@ describe('index.ts', () => {
             success: true,
           });
 
-        const redisSetAsyncSpy = jest.spyOn(axiosRedis, 'redisSetAsync');
-        const redisGetAsyncSpy = jest.spyOn(axiosRedis, 'redisGetAsync');
+        const redisSetAsyncSpy = jest.spyOn(axiosRedis.redis, 'set');
+        const redisGetAsyncSpy = jest.spyOn(axiosRedis.redis, 'get');
 
         const response = await axiosInstance.get('/example/1?sort=desc', {
           headers: { 'Axios-Redis-Cache-Duration': null },
@@ -408,8 +404,8 @@ describe('index.ts', () => {
             success: true,
           });
 
-        const redisSetAsyncSpy = jest.spyOn(axiosRedis, 'redisSetAsync');
-        const redisGetAsyncSpy = jest.spyOn(axiosRedis, 'redisGetAsync');
+        const redisSetAsyncSpy = jest.spyOn(axiosRedis.redis, 'set');
+        const redisGetAsyncSpy = jest.spyOn(axiosRedis.redis, 'get');
 
         const response = await axiosInstance.get('/example/1?sort=desc', {
           headers: { 'Axios-Redis-Cache-Duration': '0' },
@@ -435,8 +431,8 @@ describe('index.ts', () => {
             success: true,
           });
 
-        const redisSetAsyncSpy = jest.spyOn(axiosRedis, 'redisSetAsync');
-        const redisGetAsyncSpy = jest.spyOn(axiosRedis, 'redisGetAsync');
+        const redisSetAsyncSpy = jest.spyOn(axiosRedis.redis, 'set');
+        const redisGetAsyncSpy = jest.spyOn(axiosRedis.redis, 'get');
 
         const response = await axiosInstance.put('/example/1?sort=desc', {
           hello: 'world',
@@ -459,8 +455,8 @@ describe('index.ts', () => {
           .matchHeader('Api-Key', '3b48b9fd18ecca20ed5b0accbfeb6b70')
           .reply(200);
 
-        const redisSetAsyncSpy = jest.spyOn(axiosRedis, 'redisSetAsync');
-        const redisGetAsyncSpy = jest.spyOn(axiosRedis, 'redisGetAsync');
+        const redisSetAsyncSpy = jest.spyOn(axiosRedis.redis, 'set');
+        const redisGetAsyncSpy = jest.spyOn(axiosRedis.redis, 'get');
 
         const response = await axiosInstance.delete('/example/1', {
           data: { hello: 'world' },
@@ -487,8 +483,8 @@ describe('index.ts', () => {
           success: false,
         });
 
-      const redisSetAsyncSpy = jest.spyOn(axiosRedis, 'redisSetAsync');
-      const redisGetAsyncSpy = jest.spyOn(axiosRedis, 'redisGetAsync');
+      const redisSetAsyncSpy = jest.spyOn(axiosRedis.redis, 'set');
+      const redisGetAsyncSpy = jest.spyOn(axiosRedis.redis, 'get');
 
       let error: Error | null = null;
 
@@ -520,8 +516,8 @@ describe('index.ts', () => {
           success: true,
         });
 
-      const redisSetAsyncSpy = jest.spyOn(axiosRedis, 'redisSetAsync');
-      const redisGetAsyncSpy = jest.spyOn(axiosRedis, 'redisGetAsync').mockRejectedValue(new Error('Unexpected error.'));
+      const redisSetAsyncSpy = jest.spyOn(axiosRedis.redis, 'set');
+      const redisGetAsyncSpy = jest.spyOn(axiosRedis.redis, 'get').mockRejectedValue(new Error('Unexpected error.'));
 
       // tslint:disable-next-line:no-backbone-get-set-outside-model
       const response = await axiosInstance.get('/example4?param1=true&param2=123');
