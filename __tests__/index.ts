@@ -132,6 +132,65 @@ describe('index.ts', () => {
         expect(responseFromCache.data).toStrictEqual({ success: true });
       });
 
+      it('should recache the response on the first call (with custom recache header value)', async () => {
+        // tslint:disable-next-line:no-backbone-get-set-outside-model
+        const apiNock = nock('https://api.example.com')
+          .get('/example-recache')
+          .query({ param1: true, param2: 123 })
+          .matchHeader('User-Agent', '@scope/package')
+          .matchHeader('Api-Key', '3b48b9fd18ecca20ed5b0accbfeb6b70')
+          .times(2)
+          .reply(200, {
+            success: true,
+          });
+
+        const redisSetAsyncSpy = jest.spyOn(axiosRedis.redis, 'set');
+        const redisGetAsyncSpy = jest.spyOn(axiosRedis.redis, 'get');
+
+        const url = '/example-recache?param1=true&param2=123';
+
+        // tslint:disable-next-line:no-backbone-get-set-outside-model
+        const responseLive = await axiosInstance.get(url, {
+          headers: { 'Axios-Redis-Cache-Duration': '90000' },
+        });
+
+        const response2Live = await axiosInstance.get(url, {
+          headers: { 'Axios-Redis-Recache': 'true' },
+        });
+
+        const responseFromCache = await axiosInstance.get(url);
+
+        apiNock.done();
+
+        const key = '@scope/package@1.0.1___["get"]___WyIvZXhhbXBsZS1yZWNhY2hlP3BhcmFtMT10cnVlJnBhcmFtMj0xMjMiXQ==___W10=___W10=';
+
+        expect(redisGetAsyncSpy).toBeCalledTimes(2);
+        expect(redisGetAsyncSpy.mock.calls).toEqual([[key], [key]]);
+
+        expect(redisSetAsyncSpy).toBeCalledTimes(2);
+        expect(redisSetAsyncSpy.mock.calls).toEqual([
+          [
+            '@scope/package@1.0.1___["get"]___WyIvZXhhbXBsZS1yZWNhY2hlP3BhcmFtMT10cnVlJnBhcmFtMj0xMjMiXQ==___W10=___W10=',
+            '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',
+            'PX',
+            90000,
+          ],
+          [
+            '@scope/package@1.0.1___["get"]___WyIvZXhhbXBsZS1yZWNhY2hlP3BhcmFtMT10cnVlJnBhcmFtMj0xMjMiXQ==___W10=___W10=',
+            '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',
+            'PX',
+            30000,
+          ],
+        ]);
+
+        expect(responseLive.status).toEqual(200);
+        expect(responseLive.data).toStrictEqual({ success: true });
+        expect(response2Live.status).toEqual(200);
+        expect(response2Live.data).toStrictEqual({ success: true });
+        expect(responseFromCache.status).toEqual(200);
+        expect(responseFromCache.data).toStrictEqual({ success: true });
+      });
+
       it('should cache the response on the first call (with default configuration)', async () => {
         const axiosRedisRaw = new AxiosRedis(redis);
 
