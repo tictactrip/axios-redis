@@ -17,7 +17,7 @@ export class AxiosRedis {
 
   /**
    * @constructor
-   * @param {RedisClientType} redis
+   * @param {Redis} redis
    * @param {ICacheConfiguration} config
    */
   constructor(redis: Redis, config: ICacheConfiguration = {}) {
@@ -78,15 +78,20 @@ export class AxiosRedis {
       if (axiosRedis.methodsToCache.includes(<EHttpMethod>config.method.toLowerCase())) {
         const key: string = axiosRedis.createKey(config);
 
-        const data: string | null = await axiosRedis.getCache(key);
+        // Check if the request should be recached
+        if (!config.headers[EAxiosCacheHeaders.Recache] || config.headers[EAxiosCacheHeaders.Recache] === 'false') {
+          const data: string | null = await axiosRedis.getCache(key);
 
-        if (data) {
-          return flatted.parse(data);
+          if (data) {
+            return flatted.parse(data);
+          }
         }
 
         // Send the request and store the result in case of success
         const cacheDuration: string | number = config.headers[EAxiosCacheHeaders.CacheDuration];
+
         response = await axiosRedis.fetch(config);
+
         await axiosRedis.setCache(key, response, cacheDuration);
 
         return response;
@@ -128,6 +133,7 @@ export class AxiosRedis {
    */
   private fetch(config: AxiosRequestConfig): AxiosPromise {
     delete config.headers[EAxiosCacheHeaders.CacheDuration];
+    delete config.headers[EAxiosCacheHeaders.Recache];
 
     const axiosDefaultAdapter: AxiosInstance = axios.create(Object.assign(config, { adapter: axios.defaults.adapter }));
 

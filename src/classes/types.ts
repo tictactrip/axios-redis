@@ -1,5 +1,6 @@
 enum EAxiosCacheHeaders {
   CacheDuration = 'Axios-Redis-Cache-Duration',
+  Recache = 'Axios-Redis-Recache',
 }
 
 enum ERedisFlag {
