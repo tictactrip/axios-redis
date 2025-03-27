@@ -60,7 +60,13 @@ export class AxiosRedis {
 
     duration = duration || this.config.expirationInMS;
 
-    const compressedData: string = await compress(flatted.stringify(data));
+    const compressedData: string = await compress(
+      flatted.stringify({
+        data: data.data,
+        status: data.status,
+        headers: data.headers,
+      }),
+    );
 
     return this.redis.set(key, compressedData, ERedisFlag.EXPIRATION_IN_MS, duration);
   }
